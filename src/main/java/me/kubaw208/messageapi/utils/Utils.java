@@ -19,7 +19,7 @@ public class Utils {
      * @return Component with a hex colors message
      */
     public static Component hexComponent(String message) {
-        return miniMessage.deserialize(message);
+        return miniMessage.deserializeOrNull(message);
     }
 
     public static List<Component> hexComponentList(List<String> messages) {

@@ -1,0 +1,35 @@
+package me.kubaw208.messageapi.structs.messages;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import me.kubaw208.messageapi.enums.MessageType;
+import me.kubaw208.messageapi.structs.SoundableMessage;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+
+@JsonPropertyOrder("messageType")
+public class EmptyMessage extends SoundableMessage {
+
+    @JsonProperty("messageType") public MessageType messageType = MessageType.EMPTY;
+
+    @Override
+    public void sendTo(@NotNull Player player) {
+        applySound(player);
+        applyCommands(player);
+    }
+
+    @Override
+    public EmptyMessage replace(@NotNull String toReplace, @NotNull String replaced) {
+        return this.clone();
+    }
+
+    @Override
+    public EmptyMessage clone() {
+        try {
+            return (EmptyMessage) super.clone();
+        } catch(CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
+
+}

@@ -1,29 +1,30 @@
 package me.kubaw208.messageapi.structs.messages;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
-import me.kubaw208.messageapi.structs.Message;
+import me.kubaw208.messageapi.structs.SoundableMessage;
 import me.kubaw208.messageapi.utils.Utils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class ChatMessage extends Message implements Cloneable {
+public class ChatMessage extends SoundableMessage {
 
     @Getter @Setter private String message;
 
-    public ChatMessage(String message) {
+    @JsonCreator
+    public ChatMessage(@NotNull @JsonProperty("message") String message) {
         this.message = message;
     }
 
     @Override
     public void sendTo(@NotNull Player player) {
-        applyMessageSound(player);
+        applySound(player);
         applyCommands(player);
         sendMessage(player, Utils.hexComponent(message));
-        sendActionBar(player, Utils.hexComponent(message));
-        sendTitle(player, Utils.hexComponent(message), null, 500, 3000, 2000);
     }
 
     @Override

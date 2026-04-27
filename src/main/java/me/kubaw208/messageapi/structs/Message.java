@@ -1,42 +1,75 @@
 package me.kubaw208.messageapi.structs;
 
-import lombok.AccessLevel;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import me.kubaw208.betterrunnableapi.BetterDelayedRunnable;
-import me.kubaw208.messageapi.structs.messages.ChatMessage;
-import me.kubaw208.messageapi.utils.Utils;
+import me.kubaw208.messageapi.structs.messages.*;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.title.TitlePart;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import tools.jackson.databind.MapperFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
+
+@JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 @Getter
 public abstract class Message {
 
     protected static JavaPlugin plugin;
     private static BukkitAudiences adventure;
 
-    @Setter @Accessors(chain = true) private List<String> soundPaths = new ArrayList<>();
-    @Setter @Accessors(chain = true) private int soundDelay = 0;
-    @Setter @Accessors(chain = true) private float soundVolume = 1;
-    @Setter @Accessors(chain = true) private float soundPitch = 1;
-    @Getter(AccessLevel.PRIVATE) private Location soundLocation = null;
+    @Setter @Getter private static ObjectMapper objectMapper;
+    private static final Set<Class<?>> registeredMessageTypes = ConcurrentHashMap.newKeySet();
+
     @Setter @Accessors(chain = true) private List<String> commands = new ArrayList<>();
 
     public static void init(JavaPlugin plugin) {
         Message.plugin = plugin;
         Message.adventure = BukkitAudiences.create(plugin);
+
+        registerMessageType(EmptyMessage.class);
+        registerMessageType(ChatMessage.class);
+        registerMessageType(ChatListMessage.class);
+        registerMessageType(ActionBarMessage.class);
+        registerMessageType(AnimatedActionBarMessage.class);
+        registerMessageType(TitleMessage.class);
+        registerMessageType(AnimatedTitleMessage.class);
+        registerMessageType(MultiMessage.class);
+    }
+
+    public synchronized static void registerMessageType(Class<? extends Message> message) {
+        if(registeredMessageTypes.add(message)) {
+            var builder = JsonMapper.builder()
+                    .configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, false);
+
+            builder.registerSubtypes(registeredMessageTypes);
+            objectMapper = builder.build();
+        }
+    }
+
+    public synchronized static void unregisterMessageType(Class<? extends Message> message) {
+        if(registeredMessageTypes.remove(message)) {
+            var builder = JsonMapper.builder();
+
+            builder.registerSubtypes(registeredMessageTypes);
+            objectMapper = builder.build();
+        }
     }
 
     /**
@@ -138,45 +171,34 @@ public abstract class Message {
         return replace(toReplace, String.valueOf(replaced));
     }
 
-    /**
-     * Sets location where sound will be played.
-     * @param location location where sound will be played. If null, sound will be played in recipient location.
-     * @return this message instance for chaining.
-     */
-    public Message inLocation(Location location) {
-        this.soundLocation = location;
-        return this;
+    public <T extends Message> @Nullable T asOrNull(@NotNull Class<T> type) {
+        if(!type.isInstance(this)) return null;
+
+        return type.cast(this);
     }
 
-    public <T extends Message> T as(@NotNull Class<T> type) {
-        if(type.isInstance(this))
-            return type.cast(this);
-
-        throw new ClassCastException("Cannot cast " + this.getClass().getSimpleName() + " to " + type.getSimpleName());
+    public @Nullable EmptyMessage asEmpty() {
+        return asOrNull(EmptyMessage.class);
     }
 
-    public ChatMessage asChat() {
-        return as(ChatMessage.class);
+    public @Nullable ChatMessage asChat() {
+        return asOrNull(ChatMessage.class);
     }
 
-    /**
-     * Plays sound to the player. Should be called when sending message.
-     * @param player player who received the message.
-     */
-    protected void applyMessageSound(@NotNull Player player) {
-        if(soundPaths.isEmpty()) return;
+    public @Nullable ChatListMessage asChatList() {
+        return asOrNull(ChatListMessage.class);
+    }
 
-        new BetterDelayedRunnable(plugin, task -> {
-            if(!player.isOnline()) return;
+    public @Nullable ActionBarMessage asActionBar() {
+        return asOrNull(ActionBarMessage.class);
+    }
 
-            Location location = soundLocation != null ? soundLocation : player.getLocation();
+    public @Nullable TitleMessage asTitle() {
+        return asOrNull(TitleMessage.class);
+    }
 
-            var sound = soundPaths.get(
-                    soundPaths.size() == 1 ? 0 : Utils.getRandom(0, soundPaths.size() - 1)
-            );
-
-            player.playSound(location, sound, soundVolume, soundPitch);
-        }, soundDelay);
+    public @Nullable MultiMessage asMultiple() {
+        return asOrNull(MultiMessage.class);
     }
 
     /**
