@@ -1,6 +1,9 @@
 package me.kubaw208.messageapi.structs;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -94,7 +97,7 @@ public abstract class Message {
     public abstract Message replace(@NotNull String toReplace, @NotNull String replaced);
 
     /**
-     * Sends message to given player.
+     * Sends message to given player with delay in ticks.
      * @param player player to send message to.
      */
     private Message sendToInternal(Player player, int delayInTicks) {
@@ -117,48 +120,6 @@ public abstract class Message {
     public Message sendTo(@NotNull Player player, int delayInTicks) {
         sendToInternal(player, delayInTicks);
         return this;
-    }
-
-    /**
-     * Sends message to given player. Uses adventure API that increases MiniMessage versions support.
-     * @param player player to send message to.
-     * @param message message to send.
-     */
-    protected void sendMessage(Player player, Component message) {
-        adventure.player(player).sendMessage(message);
-    }
-
-    /**
-     * Sends actionbar message to given player. Uses adventure API that increases MiniMessage versions support.
-     * @param player player to send message to.
-     * @param message message to send.
-     */
-    protected void sendActionBar(Player player, Component message) {
-        adventure.player(player).sendActionBar(message);
-    }
-
-    /**
-     * Sends title to given player. Uses adventure API that increases MiniMessage versions support.
-     * @param player player to send message to.
-     * @param title title message to send.
-     * @param subtitle subtitle message to send.
-     * @param fadeIn time in milliseconds for title to fade in.
-     * @param stay time in milliseconds for title to stay.
-     * @param fadeOut time in milliseconds for title to fade out.
-     */
-    protected void sendTitle(@NotNull Player player, Component title, Component subtitle, int fadeIn, int stay, int fadeOut) {
-        var audience = adventure.player(player);
-
-        audience.sendTitlePart(
-                TitlePart.TIMES,
-                Title.Times.times(
-                        Duration.ofMillis(fadeIn),
-                        Duration.ofMillis(stay),
-                        Duration.ofMillis(fadeOut)
-                )
-        );
-        audience.sendTitlePart(TitlePart.TITLE, title != null ? title : Component.empty());
-        audience.sendTitlePart(TitlePart.SUBTITLE, subtitle != null ? subtitle : Component.empty());
     }
 
     /**
@@ -282,6 +243,48 @@ public abstract class Message {
 
     public @Nullable MultiMessage asMultiple() {
         return asOrNull(MultiMessage.class);
+    }
+
+    /**
+     * Sends message to given player. Uses adventure API that increases MiniMessage versions support.
+     * @param player player to send message to.
+     * @param message message to send.
+     */
+    protected void sendMessage(Player player, Component message) {
+        adventure.player(player).sendMessage(message);
+    }
+
+    /**
+     * Sends actionbar message to given player. Uses adventure API that increases MiniMessage versions support.
+     * @param player player to send message to.
+     * @param message message to send.
+     */
+    protected void sendActionBar(Player player, Component message) {
+        adventure.player(player).sendActionBar(message);
+    }
+
+    /**
+     * Sends title to given player. Uses adventure API that increases MiniMessage versions support.
+     * @param player player to send message to.
+     * @param title title message to send.
+     * @param subtitle subtitle message to send.
+     * @param fadeIn time in milliseconds for title to fade in.
+     * @param stay time in milliseconds for title to stay.
+     * @param fadeOut time in milliseconds for title to fade out.
+     */
+    protected void sendTitle(@NotNull Player player, Component title, Component subtitle, int fadeIn, int stay, int fadeOut) {
+        var audience = adventure.player(player);
+
+        audience.sendTitlePart(
+                TitlePart.TIMES,
+                Title.Times.times(
+                        Duration.ofMillis(fadeIn),
+                        Duration.ofMillis(stay),
+                        Duration.ofMillis(fadeOut)
+                )
+        );
+        audience.sendTitlePart(TitlePart.TITLE, title != null ? title : Component.empty());
+        audience.sendTitlePart(TitlePart.SUBTITLE, subtitle != null ? subtitle : Component.empty());
     }
 
     /**
