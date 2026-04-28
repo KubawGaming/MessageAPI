@@ -33,7 +33,7 @@ public class TitleMessage extends SoundableMessage {
     }
 
     @Override
-    public void sendTo(@NotNull Player player) {
+    public TitleMessage sendToInternal(@NotNull Player player) {
         applySound(player);
         applyCommands(player);
         sendTitle(player,
@@ -43,6 +43,7 @@ public class TitleMessage extends SoundableMessage {
                 stay,
                 fadeOut
         );
+        return this;
     }
 
     @Override

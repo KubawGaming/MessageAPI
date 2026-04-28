@@ -1,10 +1,10 @@
 package me.kubaw208.messageapi.structs;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import me.kubaw208.betterrunnableapi.BetterDelayedRunnable;
 import me.kubaw208.messageapi.structs.messages.*;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
@@ -22,12 +22,18 @@ import tools.jackson.databind.json.JsonMapper;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
-@JsonInclude(JsonInclude.Include.NON_EMPTY)
+@JsonInclude(value= JsonInclude.Include.NON_EMPTY, content= JsonInclude.Include.NON_NULL)
+@JsonAutoDetect(
+        fieldVisibility = JsonAutoDetect.Visibility.ANY,
+        getterVisibility = JsonAutoDetect.Visibility.NONE,
+        isGetterVisibility = JsonAutoDetect.Visibility.NONE
+)
 @Getter
 public abstract class Message {
 
@@ -37,11 +43,12 @@ public abstract class Message {
     @Setter @Getter private static ObjectMapper objectMapper;
     private static final Set<Class<?>> registeredMessageTypes = ConcurrentHashMap.newKeySet();
 
+    @JsonProperty("messageDelay") @Setter private Integer messageDelay = null;
     @Setter @Accessors(chain = true) private List<String> commands = new ArrayList<>();
 
     public static void init(JavaPlugin plugin) {
-        Message.plugin = plugin;
-        Message.adventure = BukkitAudiences.create(plugin);
+        me.kubaw208.messageapi.structs.Message.plugin = plugin;
+        me.kubaw208.messageapi.structs.Message.adventure = BukkitAudiences.create(plugin);
 
         registerMessageType(EmptyMessage.class);
         registerMessageType(ChatMessage.class);
@@ -76,7 +83,7 @@ public abstract class Message {
      * Sends message to given player.
      * @param player player to send message to.
      */
-    public abstract void sendTo(@NotNull Player player);
+    protected abstract Message sendToInternal(@NotNull Player player);
 
     /**
      * Replaces text in the message.
@@ -85,6 +92,32 @@ public abstract class Message {
      * @return new message with replaced placeholder.
      */
     public abstract Message replace(@NotNull String toReplace, @NotNull String replaced);
+
+    /**
+     * Sends message to given player.
+     * @param player player to send message to.
+     */
+    private Message sendToInternal(Player player, int delayInTicks) {
+        new BetterDelayedRunnable(plugin, task -> sendToInternal(player), delayInTicks);
+        return this;
+    }
+
+    /**
+     * Sends message to given player.
+     * @param player player to send message to.
+     */
+    public Message sendTo(@NotNull Player player) {
+        sendToInternal(player, getMessageDelay());
+        return this;
+    }
+    /**
+     * Sends message to given player with delay in ticks.
+     * @param player player to send message to.
+     */
+    public Message sendTo(@NotNull Player player, int delayInTicks) {
+        sendToInternal(player, delayInTicks);
+        return this;
+    }
 
     /**
      * Sends message to given player. Uses adventure API that increases MiniMessage versions support.
@@ -132,29 +165,79 @@ public abstract class Message {
      * Sends message to given players.
      * @param players players to send message to.
      */
-    public void sendTo(@NotNull Iterable<? extends Player> players) {
-        for(Player player : players) {
-            sendTo(player);
-        }
+    public Message sendTo(@NotNull Iterable<? extends Player> players) {
+        new BetterDelayedRunnable(plugin, task -> {
+            for(Player player : players) {
+                sendToInternal(player);
+            }
+        }, getMessageDelay());
+        return this;
+    }
+
+    /**
+     * Sends message to given players with delay in ticks.
+     * @param players players to send message to.
+     * @param delayInTicks delay in ticks.
+     */
+    public Message sendTo(@NotNull Iterable<? extends Player> players, int delayInTicks) {
+        new BetterDelayedRunnable(plugin, task -> {
+            for(Player player : players) {
+                sendToInternal(player);
+            }
+        }, delayInTicks);
+        return this;
     }
 
     /**
      * Sends message to given players.
      * @param players players to send message to.
      */
-    public void sendTo(Player... players) {
-        for(Player player : players) {
-            sendTo(player);
-        }
+    public Message sendTo(Player... players) {
+        new BetterDelayedRunnable(plugin, task -> {
+            for(Player player : players) {
+                sendToInternal(player);
+            }
+        }, getMessageDelay());
+        return this;
+    }
+
+    /**
+     * Sends message to given players with delay in ticks.
+     * @param players players to send message to.
+     * @param delayInTicks delay in ticks.
+     */
+    public Message sendTo(int delayInTicks, Player... players) {
+        new BetterDelayedRunnable(plugin, task -> {
+            for(Player player : players) {
+                sendToInternal(player);
+            }
+        }, delayInTicks);
+        return this;
     }
 
     /**
      * Broadcasts message to all online players.
      */
-    public void broadcast() {
-        for(Player player : Bukkit.getOnlinePlayers()) {
-            sendTo(player);
-        }
+    public Message broadcast() {
+        new BetterDelayedRunnable(plugin, task -> {
+            for(Player player : Bukkit.getOnlinePlayers()) {
+                sendToInternal(player);
+            }
+        }, getMessageDelay());
+        return this;
+    }
+
+    /**
+     * Broadcasts message to all online players with delay in ticks.
+     * @param delayInTicks delay in ticks.
+     */
+    public Message broadcast(int delayInTicks) {
+        new BetterDelayedRunnable(plugin, task -> {
+            for(Player player : Bukkit.getOnlinePlayers()) {
+                sendToInternal(player);
+            }
+        }, delayInTicks);
+        return this;
     }
 
     /**
@@ -214,6 +297,13 @@ public abstract class Message {
                     command.replace("{PLAYER}", player.getName())
             );
         }
+    }
+
+    /**
+     * @return delay in ticks for the message. Default is 0 if not specified in config file.
+     */
+    public Integer getMessageDelay() {
+        return Objects.requireNonNullElse(messageDelay, 0);
     }
 
 }

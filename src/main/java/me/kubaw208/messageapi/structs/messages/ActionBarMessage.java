@@ -19,10 +19,11 @@ public class ActionBarMessage extends SoundableMessage {
     }
 
     @Override
-    public void sendTo(@NotNull Player player) {
+    public ActionBarMessage sendToInternal(@NotNull Player player) {
         applySound(player);
         applyCommands(player);
         sendActionBar(player, Utils.hexComponent(message));
+        return this;
     }
 
     @Override

@@ -37,11 +37,11 @@ public class AnimatedActionBarMessage extends SoundableMessage {
     }
 
     @Override
-    public void sendTo(@NotNull Player player) {
+    public AnimatedActionBarMessage sendToInternal(@NotNull Player player) {
         applySound(player);
         applyCommands(player);
 
-        if(frames.isEmpty()) return;
+        if(frames.isEmpty()) return this;
 
         List<ActionBarAnimationData> frameList = frames;
         AtomicInteger previousFrame = new AtomicInteger(0);
@@ -85,6 +85,7 @@ public class AnimatedActionBarMessage extends SoundableMessage {
             previousFrame.set(currentFrame.get() - 1);
             allFramesTime.addAndGet(frameTime);
         }, 0, 1));
+        return this;
     }
 
     @Override

@@ -23,13 +23,14 @@ public class ChatListMessage extends SoundableMessage {
     }
 
     @Override
-    public void sendTo(@NotNull Player player) {
+    public ChatListMessage sendToInternal(@NotNull Player player) {
         applySound(player);
         applyCommands(player);
 
         for(String message : messages) {
             sendMessage(player, Utils.hexComponent(message));
         }
+        return this;
     }
 
     @Override

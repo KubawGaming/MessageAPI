@@ -21,10 +21,11 @@ public class MultiMessage extends SoundableMessage {
     }
 
     @Override
-    public void sendTo(@NotNull Player player) {
+    public MultiMessage sendToInternal(@NotNull Player player) {
         for(Message message : messages) {
             message.sendTo(player);
         }
+        return this;
     }
 
     @Override

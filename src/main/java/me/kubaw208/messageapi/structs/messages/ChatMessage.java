@@ -21,10 +21,11 @@ public class ChatMessage extends SoundableMessage {
     }
 
     @Override
-    public void sendTo(@NotNull Player player) {
+    public ChatMessage sendToInternal(@NotNull Player player) {
         applySound(player);
         applyCommands(player);
         sendMessage(player, Utils.hexComponent(message));
+        return this;
     }
 
     @Override

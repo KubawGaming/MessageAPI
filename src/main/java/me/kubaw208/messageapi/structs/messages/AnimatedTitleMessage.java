@@ -42,11 +42,11 @@ public class AnimatedTitleMessage extends SoundableMessage {
     }
 
     @Override
-    public void sendTo(@NotNull Player player) {
+    public AnimatedTitleMessage sendToInternal(@NotNull Player player) {
         applySound(player);
         applyCommands(player);
 
-        if(frames.isEmpty()) return;
+        if(frames.isEmpty()) return this;
 
         List<TitleAnimationData> frameList = new ArrayList<>(frames);
         AtomicInteger currentFrame = new AtomicInteger(0);
@@ -88,6 +88,7 @@ public class AnimatedTitleMessage extends SoundableMessage {
             currentFrame.incrementAndGet();
             allFramesTime.addAndGet(frameTime);
         }, 0, 1));
+        return this;
     }
 
     @Override

@@ -14,7 +14,7 @@ public abstract class LocalizedMessage extends Message {
 
     @JsonIgnore @Setter @Accessors(chain = true) private Location location = null;
 
-    // Override for getter/setter chaining
+    // Override for setter chaining to LocalizedMessage
     @Setter @Accessors(chain = true) private List<String> commands = new ArrayList<>();
 
 }

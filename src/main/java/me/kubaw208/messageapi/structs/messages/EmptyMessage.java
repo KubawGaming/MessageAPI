@@ -13,9 +13,10 @@ public class EmptyMessage extends SoundableMessage {
     @JsonProperty("messageType") public MessageType messageType = MessageType.EMPTY;
 
     @Override
-    public void sendTo(@NotNull Player player) {
+    public EmptyMessage sendToInternal(@NotNull Player player) {
         applySound(player);
         applyCommands(player);
+        return this;
     }
 
     @Override
