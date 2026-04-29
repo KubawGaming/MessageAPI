@@ -52,7 +52,7 @@ public abstract class Message {
     @Setter @Getter private static ObjectMapper objectMapper;
     private static final Set<Class<?>> registeredMessageTypes = ConcurrentHashMap.newKeySet();
 
-    @JsonProperty("messageDelay") @Setter private Integer messageDelay = null;
+    @JsonProperty("messageDelay") @Setter @Accessors(chain = true) private Integer messageDelay = null;
     @Setter @Accessors(chain = true) private List<String> commands = new ArrayList<>();
 
     /**
@@ -336,7 +336,7 @@ public abstract class Message {
 
     /**
      * Sends this message to all players in the specified world who have the given permission,
-     * after a specified delay (in ticks).
+     * after a delay (in ticks).
      * @param world the world whose players may receive the message.
      * @param permission the permission required to receive the message.
      * @param delayInTicks the delay before sending the message (in server ticks).
@@ -345,6 +345,39 @@ public abstract class Message {
     public Message sendTo(@NotNull World world, @NotNull String permission, int delayInTicks) {
         new BetterDelayedRunnable(plugin, task -> {
             for(Player player : world.getPlayers()) {
+                if(!player.hasPermission(permission)) continue;
+
+                sendToInternal(player);
+            }
+        }, delayInTicks);
+        return this;
+    }
+
+    /**
+     * Sends this message to all online players having the given permission.
+     * @param permission permission required to receive the message.
+     * @return this Message instance for chaining.
+     */
+    public Message broadcast(@NotNull String permission) {
+        new BetterDelayedRunnable(plugin, task -> {
+            for(Player player : Bukkit.getOnlinePlayers()) {
+                if(!player.hasPermission(permission)) continue;
+
+                sendToInternal(player);
+            }
+        }, getMessageDelay());
+        return this;
+    }
+
+    /**
+     * Sends this message to all online players having the given permission after a delay (in ticks).
+     * @param permission permission required to receive the message.
+     * @param delayInTicks delay before sending the message (in server ticks).
+     * @return this Message instance for chaining.
+     */
+    public Message broadcast(@NotNull String permission, int delayInTicks) {
+        new BetterDelayedRunnable(plugin, task -> {
+            for(Player player : Bukkit.getOnlinePlayers()) {
                 if(!player.hasPermission(permission)) continue;
 
                 sendToInternal(player);
@@ -476,6 +509,39 @@ public abstract class Message {
     public Message sendTo(@NotNull Iterable<? extends Player> players, @NotNull Predicate<Player> filter, int delayInTicks) {
         new BetterDelayedRunnable(plugin, task -> {
             for(Player player : players) {
+                if(!filter.test(player)) continue;
+
+                sendToInternal(player);
+            }
+        }, delayInTicks);
+        return this;
+    }
+
+    /**
+     * Sends this message to all online players matching the given predicate.
+     * @param filter predicate deciding who receives the message.
+     * @return this Message instance for chaining.
+     */
+    public Message broadcast(@NotNull Predicate<Player> filter) {
+        new BetterDelayedRunnable(plugin, task -> {
+            for(Player player : Bukkit.getOnlinePlayers()) {
+                if(!filter.test(player)) continue;
+
+                sendToInternal(player);
+            }
+        }, getMessageDelay());
+        return this;
+    }
+
+    /**
+     * Sends this message to all online players matching the given predicate after a delay (in ticks).
+     * @param filter predicate deciding who receives the message.
+     * @param delayInTicks delay before sending the message (in server ticks).
+     * @return this Message instance for chaining.
+     */
+    public Message broadcast(@NotNull Predicate<Player> filter, int delayInTicks) {
+        new BetterDelayedRunnable(plugin, task -> {
+            for(Player player : Bukkit.getOnlinePlayers()) {
                 if(!filter.test(player)) continue;
 
                 sendToInternal(player);

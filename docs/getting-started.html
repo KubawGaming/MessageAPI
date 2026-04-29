@@ -133,6 +133,27 @@ dependencies {
     implementation("com.github.KubawGaming:MessageAPI:1.0.0")
 }</code></pre>
 
+    <h2>Relocation (Paper 1.17-1.19)</h2>
+    <p>If you're targeting Paper versions between 1.17 and 1.19, you need to relocate the Adventure API to avoid conflicts:</p>
+
+    <h3>Gradle (Groovy)</h3>
+    <pre><code>plugins {
+    id 'com.gradleup.shadow' version '8.3.3'
+}
+
+shadowJar {
+    relocate "net.kyori", "me.kubaw208.messageapi.libs.kyori"
+}</code></pre>
+
+    <h3>Gradle (Kotlin DSL)</h3>
+    <pre><code>plugins {
+    id("com.gradleup.shadow") version "8.3.3"
+}
+
+tasks.shadowJar {
+    relocate("net.kyori", "me.kubaw208.messageapi.libs.kyori")
+}</code></pre>
+
     <h2>Troubleshooting</h2>
 
     <h3>MessageAPI not initializing</h3>

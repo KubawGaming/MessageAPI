@@ -125,14 +125,13 @@
 
     <h3>Developer Usage</h3>
     <p>Use the <code>sendTo()</code> method variants with delay parameter:</p>
-    <pre><code>ChatMessage message = new ChatMessage("&lt;green&gt;Welcome!");
+    <pre><code>Message message = new ChatMessage("&lt;green&gt;Welcome!");
 
-// Send with 2 second delay (40 ticks)
+// Send with 2 second delay (40 ticks), recommended usage
 message.sendTo(player, 40);
 
 // Or set delay and send
-message.setMessageDelay(40)
-       .sendTo(player);</code></pre>
+message.setMessageDelay(40).sendTo(player);</code></pre>
 
     <hr>
 
@@ -148,7 +147,8 @@ message.setMessageDelay(40)
     - "effect give {PLAYER} speed 30 1"</code></pre>
 
     <h3>Developer Usage</h3>
-    <pre><code>ChatMessage message = new ChatMessage("&lt;gold&gt;Reward claimed!");
+    <pre><code>Message message = new ChatMessage("&lt;gold&gt;Reward claimed!");
+
 message.setCommands(List.of(
     "give {PLAYER} diamond 1",
     "effect give {PLAYER} speed 30 1"
@@ -220,13 +220,13 @@ message.sendTo(player);</code></pre>
                 <td><code>volume</code></td>
                 <td>Float</td>
                 <td>1.0</td>
-                <td>Sound volume (0.0 - 1.0+)</td>
+                <td>Sound volume</td>
             </tr>
             <tr>
                 <td><code>pitch</code></td>
                 <td>Float</td>
                 <td>1.0</td>
-                <td>Sound pitch (0.5 - 2.0)</td>
+                <td>Sound pitch</td>
             </tr>
         </tbody>
     </table>
@@ -234,23 +234,22 @@ message.sendTo(player);</code></pre>
     <h3>Developer Usage</h3>
 
     <h4>Basic Sound</h4>
-    <pre><code>ChatMessage message = new ChatMessage("&lt;green&gt;Level Up!");
-message.getSound()
-       .setPaths(List.of("entity.player.levelup"));
-message.sendTo(player);</code></pre>
+    <pre><code>SoundableMessage message = new ChatMessage("&lt;green&gt;Level Up!");
+
+message.setSoundPaths(List.of("entity.player.levelup"))
+        .sendTo(player);</code></pre>
 
     <h4>Multiple Sounds with Configuration</h4>
-    <pre><code>ChatMessage message = new ChatMessage("&lt;yellow&gt;Notification!");
-message.getSound()
-       .setPaths(List.of(
-           "block.note_block.pling",
-           "block.note_block.chime",
-           "block.note_block.bell"
-       ))
-       .setVolume(1.0f)
-       .setPitch(1.5f)
-       .setDelay(10);
-message.sendTo(player);</code></pre>
+    <pre><code>SoundableMessage message = new ChatMessage("<yellow>Notification!");
+
+message.setSoundPaths(List.of(
+                "block.note_block.pling",
+                "block.note_block.chime",
+                "block.note_block.bell"))
+        .setSoundVolume(0.8f)
+        .setSoundPitch(1.5f)
+        .setSoundDelay(10)
+        .sendTo(player);</code></pre>
 
     <div class="note">
         <strong>Important:</strong> When multiple sound paths are provided, only <strong>one random sound</strong> is played per player. Sounds are not played simultaneously.

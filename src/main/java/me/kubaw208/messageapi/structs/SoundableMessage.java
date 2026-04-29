@@ -52,7 +52,6 @@ public abstract class SoundableMessage extends LocalizedMessage {
             if(!player.isOnline()) return;
 
             Location location = getLocation() != null ? getLocation() : player.getLocation();
-
             var sound = soundSettings.getPaths().get(
                     soundSettings.getPaths().size() == 1 ? 0 : Utils.getRandom(0, soundSettings.getPaths().size() - 1)
             );
