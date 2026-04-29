@@ -13,6 +13,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A message that can play a sound effect when delivered to a player.
+ * <p>
+ * Extends {@link LocalizedMessage} by adding optional sound configuration
+ * such as sound paths, volume, pitch, delay, and playback location.
+ */
 public abstract class SoundableMessage extends LocalizedMessage {
 
     @JsonProperty("sound") private SoundSettings soundSettings = null;
@@ -21,8 +27,10 @@ public abstract class SoundableMessage extends LocalizedMessage {
     @Getter @Setter @Accessors(chain = true) private List<String> commands = new ArrayList<>();
 
     /**
-     * Sets location where sound will be played.
-     * @param location location where sound will be played. If null, sound will be played in recipient location.
+     * Sets the location where the sound will be played.
+     * <p>
+     * If the location is null, the sound will be played at the recipient's current location.
+     * @param location the location where the sound will be played, or null to use player location.
      * @return this message instance for chaining.
      */
     public SoundableMessage inLocation(Location location) {
@@ -31,8 +39,11 @@ public abstract class SoundableMessage extends LocalizedMessage {
     }
 
     /**
-     * Plays sound to the player. Should be called when sending message.
-     * @param player player who received the message.
+     * Plays the configured sound to the specified player.
+     * <p>
+     * This method should be called when sending the message.
+     * If no sound paths are configured, no sound will be played.
+     * @param player the player who received the message.
      */
     protected void applySound(@NotNull Player player) {
         if(soundSettings.getPaths().isEmpty()) return;
@@ -50,6 +61,11 @@ public abstract class SoundableMessage extends LocalizedMessage {
         }, soundSettings.getDelay());
     }
 
+    /**
+     * Sets the sound paths used by this message.
+     * @param soundPaths list of sound identifiers to be used.
+     * @return this message instance for chaining.
+     */
     public SoundableMessage setSoundPaths(List<String> soundPaths) {
         if(soundSettings == null)
             soundSettings = new SoundSettings();
@@ -64,10 +80,20 @@ public abstract class SoundableMessage extends LocalizedMessage {
         return this;
     }
 
+
+    /**
+     * Returns the configured sound delay.
+     * @return delay in ticks or null if not set.
+     */
     public Integer getSoundDelay() {
         return soundSettings == null ? null : soundSettings.getDelay();
     }
 
+    /**
+     * Sets the delay before the sound is played.
+     * @param delay delay in ticks.
+     * @return this message instance for chaining.
+     */
     public SoundableMessage setSoundDelay(int delay) {
         if(soundSettings == null)
             soundSettings = new SoundSettings();
@@ -76,10 +102,19 @@ public abstract class SoundableMessage extends LocalizedMessage {
         return this;
     }
 
+    /**
+     * Returns the configured sound volume.
+     * @return volume or null if not set.
+     */
     public Float getSoundVolume() {
         return soundSettings == null ? null : soundSettings.getVolume();
     }
 
+    /**
+     * Sets the volume of the sound.
+     * @param volume sound volume.
+     * @return this message instance for chaining.
+     */
     public SoundableMessage setSoundVolume(float volume) {
         if(soundSettings == null)
             soundSettings = new SoundSettings();
@@ -88,10 +123,19 @@ public abstract class SoundableMessage extends LocalizedMessage {
         return this;
     }
 
+    /**
+     * Returns the configured sound pitch.
+     * @return pitch or null if not set.
+     */
     public Float getSoundPitch() {
         return soundSettings == null ? null : soundSettings.getPitch();
     }
 
+    /**
+     * Sets the pitch of the sound.
+     * @param pitch sound pitch.
+     * @return this message instance for chaining.
+     */
     public SoundableMessage setSoundPitch(float pitch) {
         if(soundSettings == null)
             soundSettings = new SoundSettings();

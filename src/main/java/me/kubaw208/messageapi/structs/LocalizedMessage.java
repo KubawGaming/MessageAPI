@@ -9,6 +9,13 @@ import org.bukkit.Location;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a message that is associated with a specific in-game location.
+ * <p>
+ * This class extends {@link Message} by adding optional spatial context,
+ * which can be used by implementations to modify how or where the message
+ * is delivered (e.g., proximity-based messages, location-aware effects).
+ */
 @Getter
 public abstract class LocalizedMessage extends Message {
 

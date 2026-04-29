@@ -14,6 +14,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.title.TitlePart;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -350,6 +351,77 @@ public abstract class Message {
                 sendToInternal(player);
             }
         }, delayInTicks);
+        return this;
+    }
+
+    /**
+     * Sends this message to all players within the specified radius from the given location.
+     * @param location the center location used to determine nearby players.
+     * @param radius the X/Y/Z bounding box radius (AABB). Players are searched in a cubic area, not a spherical radius.
+     * @return this Message instance for chaining.
+     */
+    public Message sendTo(@NotNull Location location, double radius) {
+        new BetterDelayedRunnable(plugin, task -> {
+            for(Player player : location.getWorld().getNearbyPlayers(location, radius)) {
+                sendToInternal(player);
+            }
+        }, getMessageDelay());
+        return this;
+    }
+
+    /**
+     * Sends this message to all players within the specified radius from the given location, after a delay (in ticks).
+     * @param location the center location used to determine nearby players.
+     * @param radius the X/Y/Z bounding box radius (AABB). Players are searched in a cubic area, not a spherical radius.
+     * @param delayInTicks the delay before sending the message (in server ticks).
+     * @return this Message instance for chaining.
+     */
+    public Message sendTo(@NotNull Location location, double radius, int delayInTicks) {
+        new BetterDelayedRunnable(plugin, task -> {
+            for(Player player : location.getWorld().getNearbyPlayers(location, radius)) {
+                sendToInternal(player);
+            }
+        }, delayInTicks);
+        return this;
+    }
+
+    /**
+     * Sends this message to all players within the specified radius from the given location
+     * who have the given permission.
+     * @param location the center location used to determine nearby players.
+     * @param radius the X/Y/Z bounding box radius (AABB). Players are searched in a cubic area, not a spherical radius.
+     * @param permission the permission required to receive the message.
+     * @return this Message instance for chaining.
+     */
+    public Message sendTo(@NotNull Location location, double radius, @NotNull String permission) {
+        new BetterDelayedRunnable(plugin, task -> {
+            for(Player player : location.getWorld().getNearbyPlayers(location, radius)) {
+                if(!player.hasPermission(permission)) continue;
+
+                sendToInternal(player);
+            }
+        }, getMessageDelay());
+        return this;
+    }
+
+    /**
+     * Sends this message to all players within the specified radius from the given location
+     * who have the given permission, after a delay (in ticks).
+     * @param location the center location used to determine nearby players.
+     * @param radius the X/Y/Z bounding box radius (AABB). Players are searched in a cubic area, not a spherical radius.
+     * @param permission the permission required to receive the message.
+     * @param delayInTicks the delay before sending the message (in server ticks).
+     * @return this Message instance for chaining.
+     */
+    public Message sendTo(@NotNull Location location, double radius, @NotNull String permission, int delayInTicks) {
+        new BetterDelayedRunnable(plugin, task -> {
+            for(Player player : location.getWorld().getNearbyPlayers(location, radius)) {
+                if(!player.hasPermission(permission)) continue;
+
+                sendToInternal(player);
+            }
+        }, delayInTicks);
+
         return this;
     }
 
