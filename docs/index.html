@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MessageAPI Documentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            background-color: #1a1a1a;
+        }
+
+        .sidebar {
+            width: 280px;
+            background-color: #1e1e1e;
+            color: white;
+            padding: 20px;
+            overflow-y: auto;
+            border-right: 1px solid #333;
+        }
+
+        .sidebar h1 {
+            font-size: 24px;
+            margin-bottom: 30px;
+            color: #3498db;
+        }
+
+        .nav-section {
+            margin-bottom: 25px;
+        }
+
+        .nav-section h3 {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #888;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 10px 15px;
+            color: #ccc;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            transition: background-color 0.2s;
+            cursor: pointer;
+        }
+
+        .nav-link:hover {
+            background-color: #2a2a2a;
+        }
+
+        .nav-link.active {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .nav-expandable {
+            display: block;
+            padding: 10px 15px;
+            color: #ccc;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            cursor: default;
+            position: relative;
+        }
+
+        .nav-submenu {
+            display: block;
+            padding-left: 15px;
+            margin-top: 5px;
+        }
+
+        .nav-sublink {
+            display: block;
+            padding: 8px 15px;
+            color: #aaa;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 3px;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        .nav-sublink:hover {
+            background-color: #2a2a2a;
+            color: #ccc;
+        }
+
+        .nav-sublink.active {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .content {
+            flex: 1;
+            overflow: hidden;
+            background-color: #1a1a1a;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background-color: #1a1a1a;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                max-height: 40vh;
+            }
+
+            .content {
+                height: 60vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h1>MessageAPI</h1>
+
+        <div class="nav-section">
+            <h3>Getting Started</h3>
+            <a href="#" class="nav-link active" data-page="getting-started.html">Getting Started</a>
+        </div>
+
+        <div class="nav-section">
+            <h3>Documentation</h3>
+            <div class="nav-expandable">Message Types</div>
+            <div class="nav-submenu">
+                <a href="#" class="nav-sublink" data-page="message-global.html">Message (Global)</a>
+                <a href="#" class="nav-sublink" data-page="placeholder.html">ChatMessage</a>
+                <a href="#" class="nav-sublink" data-page="placeholder.html">ChatListMessage</a>
+                <a href="#" class="nav-sublink" data-page="placeholder.html">ActionBarMessage</a>
+                <a href="#" class="nav-sublink" data-page="placeholder.html">AnimatedActionBarMessage</a>
+                <a href="#" class="nav-sublink" data-page="placeholder.html">TitleMessage</a>
+                <a href="#" class="nav-sublink" data-page="placeholder.html">AnimatedTitleMessage</a>
+                <a href="#" class="nav-sublink" data-page="placeholder.html">MultiMessage</a>
+                <a href="#" class="nav-sublink" data-page="placeholder.html">EmptyMessage</a>
+                <a href="#" class="nav-sublink" data-page="placeholder.html">Custom Message Types</a>
+            </div>
+            <a href="#" class="nav-link" data-page="placeholder.html">Commands</a>
+            <a href="#" class="nav-link" data-page="placeholder.html">Sounds</a>
+        </div>
+
+        <div class="nav-section">
+            <h3>Examples</h3>
+            <a href="#" class="nav-link" data-page="placeholder.html">Basic Examples</a>
+            <a href="#" class="nav-link" data-page="placeholder.html">Advanced Examples</a>
+        </div>
+    </div>
+
+    <div class="content">
+        <iframe id="content-frame" src="getting-started.html"></iframe>
+    </div>
+
+    <script>
+        const navLinks = document.querySelectorAll('.nav-link, .nav-sublink');
+        const contentFrame = document.getElementById('content-frame');
+
+        // Handle navigation links
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+
+                // Remove active class from all links
+                navLinks.forEach(l => l.classList.remove('active'));
+
+                // Add active class to clicked link
+                link.classList.add('active');
+
+                // Load the page
+                const page = link.getAttribute('data-page');
+                contentFrame.src = page;
+            });
+        });
+    </script>
+</body>
+</html>

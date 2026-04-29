@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Getting Started - MessageAPI</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #e0e0e0;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background-color: #1a1a1a;
+        }
+
+        h1 {
+            color: #3498db;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #3498db;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            color: #5dade2;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        ul {
+            margin-bottom: 20px;
+            padding-left: 25px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        strong {
+            color: #3498db;
+        }
+
+        pre {
+            background-color: #2a2a2a;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            overflow-x: auto;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        code {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            color: #aaa;
+        }
+
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #333;
+            margin: 40px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Getting Started</h1>
+
+    <p>This guide will help you integrate MessageAPI into your Minecraft Paper plugin project.</p>
+
+    <h2>Requirements</h2>
+    <ul>
+        <li><strong>Java 17+</strong></li>
+        <li><strong>Paper 1.17+</strong> (or any Paper-based server software)</li>
+        <li><strong>Maven</strong> or <strong>Gradle</strong> build system</li>
+    </ul>
+
+    <h2>Installation</h2>
+
+    <h3>Maven</h3>
+    <p>Add the JitPack repository and MessageAPI dependency to your <code>pom.xml</code>:</p>
+    <pre><code>&lt;repositories&gt;
+    &lt;repository&gt;
+        &lt;id&gt;jitpack.io&lt;/id&gt;
+        &lt;url&gt;https://jitpack.io&lt;/url&gt;
+    &lt;/repository&gt;
+&lt;/repositories&gt;
+
+&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;com.github.KubawGaming&lt;/groupId&gt;
+        &lt;artifactId&gt;MessageAPI&lt;/artifactId&gt;
+        &lt;version&gt;1.0.0&lt;/version&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;</code></pre>
+
+    <h3>Gradle (Groovy)</h3>
+    <p>Add the JitPack repository and MessageAPI dependency to your <code>build.gradle</code>:</p>
+    <pre><code>repositories {
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    implementation 'com.github.KubawGaming:MessageAPI:1.0.0'
+}</code></pre>
+
+    <h3>Gradle (Kotlin DSL)</h3>
+    <p>Add the JitPack repository and MessageAPI dependency to your <code>build.gradle.kts</code>:</p>
+    <pre><code>repositories {
+    maven("https://jitpack.io")
+}
+
+dependencies {
+    implementation("com.github.KubawGaming:MessageAPI:1.0.0")
+}</code></pre>
+
+    <h2>Troubleshooting</h2>
+
+    <h3>MessageAPI not initializing</h3>
+    <p>Make sure you call <code>Message.init(this)</code> in your plugin's <code>onEnable()</code> method before using any message types.</p>
+
+    <h3>Messages not displaying colors</h3>
+    <p>Ensure you're using MiniMessage formatting tags (e.g., <code>&lt;green&gt;</code>, <code>&lt;#FF5555&gt;</code>) instead of legacy color codes (e.g., <code>&amp;a</code>, <code>&amp;c</code>).</p>
+
+    <hr>
+
+    <p><strong>Need more help?</strong> Open an <a href="https://github.com/KubawGaming/MessageAPI/issues" target="_blank">issue on GitHub</a>.</p>
+</body>
+</html>
