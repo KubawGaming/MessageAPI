@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
 
 /**
  * Base abstract representation of a message that can be sent to players
@@ -421,7 +422,67 @@ public abstract class Message {
                 sendToInternal(player);
             }
         }, delayInTicks);
+        return this;
+    }
 
+    /**
+     * Sends this message to a single player if they match the given predicate.
+     * @param player the player to check and potentially send the message to.
+     * @param filter predicate deciding whether the player should receive the message.
+     * @return this Message instance for chaining.
+     */
+    public Message sendTo(@NotNull Player player, @NotNull Predicate<Player> filter) {
+        if(!filter.test(player)) return this;
+
+        return sendToInternal(player);
+    }
+
+    /**
+     * Sends this message to a single player if they match the given predicate after a delay (in ticks).
+     * @param player the player to check and potentially send the message to.
+     * @param filter predicate deciding whether the player should receive the message.
+     * @param delayInTicks delay before sending the message (in server ticks).
+     * @return this Message instance for chaining.
+     */
+    public Message sendTo(@NotNull Player player, @NotNull Predicate<Player> filter, int delayInTicks) {
+        if(!filter.test(player)) return this;
+
+        new BetterDelayedRunnable(plugin, task -> sendToInternal(player), delayInTicks);
+        return this;
+    }
+
+    /**
+     * Sends this message to players matching the given predicate.
+     * @param players all available players to filter.
+     * @param filter predicate deciding who receives the message.
+     * @return this Message instance for chaining.
+     */
+    public Message sendTo(@NotNull Iterable<? extends Player> players, @NotNull Predicate<Player> filter) {
+        new BetterDelayedRunnable(plugin, task -> {
+            for(Player player : players) {
+                if(!filter.test(player)) continue;
+
+                sendToInternal(player);
+            }
+        }, getMessageDelay());
+        return this;
+    }
+
+    /**
+     * Sends this message to players matching the given predicate after a delay (in ticks).
+     * @param players all available players to filter.
+     * @param filter predicate deciding who receives the message.
+     * @param delayInTicks delay before sending the message (in server ticks).
+     * @return this Message instance for chaining.
+     */
+    public Message sendTo(@NotNull Iterable<? extends Player> players, @NotNull Predicate<Player> filter, int delayInTicks) {
+        new BetterDelayedRunnable(plugin, task -> {
+            for(Player player : players) {
+                if(!filter.test(player)) continue;
+
+                sendToInternal(player);
+            }
+        }, delayInTicks);
         return this;
     }
 
