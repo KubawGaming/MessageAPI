@@ -14,6 +14,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.title.TitlePart;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +30,10 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-
+/**
+ * Base abstract representation of a message that can be sent to players
+ * using different delivery methods (chat, title, action bar, etc.).
+ */
 @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
 @JsonInclude(value= JsonInclude.Include.NON_EMPTY, content= JsonInclude.Include.NON_NULL)
 @JsonAutoDetect(
@@ -49,9 +53,13 @@ public abstract class Message {
     @JsonProperty("messageDelay") @Setter private Integer messageDelay = null;
     @Setter @Accessors(chain = true) private List<String> commands = new ArrayList<>();
 
+    /**
+     * Initializes the message system with the given plugin instance and registers default message types.
+     * @param plugin the plugin instance used for scheduling and Adventure API.
+     */
     public static void init(JavaPlugin plugin) {
-        me.kubaw208.messageapi.structs.Message.plugin = plugin;
-        me.kubaw208.messageapi.structs.Message.adventure = BukkitAudiences.create(plugin);
+        Message.plugin = plugin;
+        Message.adventure = BukkitAudiences.create(plugin);
 
         registerMessageType(EmptyMessage.class);
         registerMessageType(ChatMessage.class);
@@ -63,6 +71,10 @@ public abstract class Message {
         registerMessageType(MultiMessage.class);
     }
 
+    /**
+     * Registers a new message type for JSON serialization/deserialization.
+     * @param message the message class to register.
+     */
     public synchronized static void registerMessageType(Class<? extends Message> message) {
         if(registeredMessageTypes.add(message)) {
             var builder = JsonMapper.builder()
@@ -73,6 +85,10 @@ public abstract class Message {
         }
     }
 
+    /**
+     * Unregisters a message type from JSON serialization/deserialization.
+     * @param message the message class to unregister.
+     */
     public synchronized static void unregisterMessageType(Class<? extends Message> message) {
         if(registeredMessageTypes.remove(message)) {
             var builder = JsonMapper.builder();
@@ -83,39 +99,47 @@ public abstract class Message {
     }
 
     /**
-     * Sends message to given player.
-     * @param player player to send message to.
+     * Sends this message to the specified player.
+     * @param player the player who will receive the message.
+     * @return this Message instance for chaining.
      */
     protected abstract Message sendToInternal(@NotNull Player player);
 
     /**
-     * Replaces text in the message.
-     * @param toReplace placeholder to replace.
-     * @param replaced new value of the placeholder.
-     * @return new message with replaced placeholder.
+     * Replaces occurrences of the given placeholder in this message.
+     * @param toReplace the placeholder to replace.
+     * @param replaced the value to replace the placeholder with.
+     * @return a new Message instance with the applied replacements.
      */
     public abstract Message replace(@NotNull String toReplace, @NotNull String replaced);
 
+
     /**
-     * Sends message to given player with delay in ticks.
-     * @param player player to send message to.
+     * Sends this message to the specified player after a delay (in ticks).
+     * @param player the player who will receive the message.
+     * @param delayInTicks the delay before sending the message (in server ticks).
+     * @return this Message instance for chaining.
      */
-    private Message sendToInternal(Player player, int delayInTicks) {
+    private Message sendToInternal(@NotNull Player player, int delayInTicks) {
         new BetterDelayedRunnable(plugin, task -> sendToInternal(player), delayInTicks);
         return this;
     }
 
     /**
-     * Sends message to given player.
-     * @param player player to send message to.
+     * Sends this message to the specified player.
+     * @param player the player who will receive the message.
+     * @return this Message instance for chaining.
      */
     public Message sendTo(@NotNull Player player) {
         sendToInternal(player, getMessageDelay());
         return this;
     }
+
     /**
-     * Sends message to given player with delay in ticks.
-     * @param player player to send message to.
+     * Sends this message to the specified player after a delay (in ticks).
+     * @param player the player who will receive the message.
+     * @param delayInTicks the delay before sending the message (in server ticks).
+     * @return this Message instance for chaining.
      */
     public Message sendTo(@NotNull Player player, int delayInTicks) {
         sendToInternal(player, delayInTicks);
@@ -123,8 +147,9 @@ public abstract class Message {
     }
 
     /**
-     * Sends message to given players.
-     * @param players players to send message to.
+     * Sends this message to the specified players.
+     * @param players the players who will receive the message.
+     * @return this Message instance for chaining.
      */
     public Message sendTo(@NotNull Iterable<? extends Player> players) {
         new BetterDelayedRunnable(plugin, task -> {
@@ -136,9 +161,10 @@ public abstract class Message {
     }
 
     /**
-     * Sends message to given players with delay in ticks.
-     * @param players players to send message to.
-     * @param delayInTicks delay in ticks.
+     * Sends this message to the specified players after a delay (in ticks).
+     * @param players the players who will receive the message.
+     * @param delayInTicks the delay before sending the message (in server ticks).
+     * @return this Message instance for chaining.
      */
     public Message sendTo(@NotNull Iterable<? extends Player> players, int delayInTicks) {
         new BetterDelayedRunnable(plugin, task -> {
@@ -150,8 +176,9 @@ public abstract class Message {
     }
 
     /**
-     * Sends message to given players.
-     * @param players players to send message to.
+     * Sends this message to the specified players.
+     * @param players the players who will receive the message.
+     * @return this Message instance for chaining.
      */
     public Message sendTo(Player... players) {
         new BetterDelayedRunnable(plugin, task -> {
@@ -163,9 +190,10 @@ public abstract class Message {
     }
 
     /**
-     * Sends message to given players with delay in ticks.
-     * @param players players to send message to.
-     * @param delayInTicks delay in ticks.
+     * Sends this message to the specified players after a delay (in ticks).
+     * @param players the players who will receive the message.
+     * @param delayInTicks the delay before sending the message (in server ticks).
+     * @return this Message instance for chaining.
      */
     public Message sendTo(int delayInTicks, Player... players) {
         new BetterDelayedRunnable(plugin, task -> {
@@ -177,7 +205,8 @@ public abstract class Message {
     }
 
     /**
-     * Broadcasts message to all online players.
+     * Broadcasts this message to all online players.
+     * @return this Message instance for chaining.
      */
     public Message broadcast() {
         new BetterDelayedRunnable(plugin, task -> {
@@ -189,8 +218,9 @@ public abstract class Message {
     }
 
     /**
-     * Broadcasts message to all online players with delay in ticks.
-     * @param delayInTicks delay in ticks.
+     * Broadcasts this message to all online players after a delay (in ticks).
+     * @param delayInTicks the delay before sending the message (in server ticks).
+     * @return this Message instance for chaining.
      */
     public Message broadcast(int delayInTicks) {
         new BetterDelayedRunnable(plugin, task -> {
@@ -202,19 +232,152 @@ public abstract class Message {
     }
 
     /**
-     * @see #replace(String, String)
+     * Sends this message to the specified player if that player has the given permission.
+     * @param player the player who may receive the message.
+     * @param permission the permission required for the player to receive the message.
+     * @return this Message instance for chaining.
+     */
+    public Message sendTo(@NotNull Player player, @NotNull String permission) {
+        if(player.hasPermission(permission))
+            sendToInternal(player, getMessageDelay());
+        return this;
+    }
+
+    /**
+     * Sends this message to the specified player if that player has the given permission, after a delay (in ticks).
+     * @param player the player who may receive the message.
+     * @param permission the permission required for the player to receive the message.
+     * @param delayInTicks the delay before sending the message (in server ticks).
+     * @return this Message instance for chaining.
+     */
+    public Message sendTo(@NotNull Player player, @NotNull String permission, int delayInTicks) {
+        if(player.hasPermission(permission))
+            sendToInternal(player, delayInTicks);
+        return this;
+    }
+
+    /**
+     * Sends this message to the specified players who have the given permission.
+     * @param players the players who may receive the message.
+     * @param permission the permission required to receive the message.
+     * @return this Message instance for chaining.
+     */
+    public Message sendTo(@NotNull Iterable<? extends Player> players, @NotNull String permission) {
+        new BetterDelayedRunnable(plugin, task -> {
+            for(Player player : players) {
+                if(!player.hasPermission(permission)) continue;
+
+                sendToInternal(player);
+            }
+        }, getMessageDelay());
+        return this;
+    }
+
+    /**
+     * Sends this message to the specified players who have the given permission, after a delay (in ticks).
+     * @param players the players who may receive the message.
+     * @param permission the permission required to receive the message.
+     * @param delayInTicks the delay before sending the message (in server ticks).
+     * @return this Message instance for chaining.
+     */
+    public Message sendTo(@NotNull Iterable<? extends Player> players, @NotNull String permission, int delayInTicks) {
+        new BetterDelayedRunnable(plugin, task -> {
+            for(Player player : players) {
+                if(!player.hasPermission(permission)) continue;
+
+                sendToInternal(player);
+            }
+        }, delayInTicks);
+        return this;
+    }
+
+
+    /**
+     * Sends this message to all players in the specified world.
+     * @param world the world whose players will receive the message.
+     * @return this Message instance for chaining.
+     */
+    public Message sendTo(@NotNull World world) {
+        for(Player player : world.getPlayers()) {
+            sendToInternal(player, getMessageDelay());
+        }
+        return this;
+    }
+
+    /**
+     * Sends this message to all players in the specified world after a delay (in ticks).
+     * @param world the world whose players will receive the message.
+     * @param delayInTicks the delay before sending the message (in server ticks).
+     * @return this Message instance for chaining.
+     */
+    public Message sendTo(@NotNull World world, int delayInTicks) {
+        for(Player player : world.getPlayers()) {
+            sendToInternal(player, delayInTicks);
+        }
+        return this;
+    }
+
+    /**
+     * Sends this message to all players in the specified world who have the given permission.
+     * @param world the world whose players may receive the message.
+     * @param permission the permission required to receive the message.
+     * @return this Message instance for chaining.
+     */
+    public Message sendTo(@NotNull World world, @NotNull String permission) {
+        new BetterDelayedRunnable(plugin, task -> {
+            for(Player player : world.getPlayers()) {
+                if(!player.hasPermission(permission)) continue;
+
+                sendToInternal(player);
+            }
+        }, getMessageDelay());
+        return this;
+    }
+
+    /**
+     * Sends this message to all players in the specified world who have the given permission,
+     * after a specified delay (in ticks).
+     * @param world the world whose players may receive the message.
+     * @param permission the permission required to receive the message.
+     * @param delayInTicks the delay before sending the message (in server ticks).
+     * @return this Message instance for chaining.
+     */
+    public Message sendTo(@NotNull World world, @NotNull String permission, int delayInTicks) {
+        new BetterDelayedRunnable(plugin, task -> {
+            for(Player player : world.getPlayers()) {
+                if(!player.hasPermission(permission)) continue;
+
+                sendToInternal(player);
+            }
+        }, delayInTicks);
+        return this;
+    }
+
+    /**
+     * Replaces a placeholder with an integer value.
+     * @param toReplace the placeholder to replace.
+     * @param replaced the value to replace the placeholder with.
+     * @return a new Message instance with the applied replacement.
      */
     public Message replace(@NotNull String toReplace, int replaced) {
         return replace(toReplace, String.valueOf(replaced));
     }
 
     /**
-     * @see #replace(String, String)
+     * Replaces a placeholder with a double value.
+     * @param toReplace the placeholder to replace.
+     * @param replaced the value to replace the placeholder with.
+     * @return a new Message instance with the applied replacement.
      */
     public Message replace(@NotNull String toReplace, double replaced) {
         return replace(toReplace, String.valueOf(replaced));
     }
 
+    /**
+     * Attempts to cast this message to the specified type.
+     * @param type the target message type.
+     * @return the casted message if possible, otherwise null.
+     */
     public <T extends Message> @Nullable T asOrNull(@NotNull Class<T> type) {
         if(!type.isInstance(this)) return null;
 
@@ -246,31 +409,31 @@ public abstract class Message {
     }
 
     /**
-     * Sends message to given player. Uses adventure API that increases MiniMessage versions support.
-     * @param player player to send message to.
-     * @param message message to send.
+     * Sends a chat message to the specified player using the Adventure API.
+     * @param player the player who will receive the message.
+     * @param message the message component to send.
      */
-    protected void sendMessage(Player player, Component message) {
-        adventure.player(player).sendMessage(message);
+    protected void sendMessage(@NotNull Player player, Component message) {
+        adventure.player(player).sendMessage(message != null ? message : Component.empty());
     }
 
     /**
-     * Sends actionbar message to given player. Uses adventure API that increases MiniMessage versions support.
-     * @param player player to send message to.
-     * @param message message to send.
+     * Sends an actionbar message to the specified player using the Adventure API.
+     * @param player the player who will receive the message.
+     * @param message the message component to send.
      */
-    protected void sendActionBar(Player player, Component message) {
-        adventure.player(player).sendActionBar(message);
+    protected void sendActionBar(@NotNull Player player, Component message) {
+        adventure.player(player).sendActionBar(message != null ? message : Component.empty());
     }
 
     /**
-     * Sends title to given player. Uses adventure API that increases MiniMessage versions support.
-     * @param player player to send message to.
-     * @param title title message to send.
-     * @param subtitle subtitle message to send.
-     * @param fadeIn time in milliseconds for title to fade in.
-     * @param stay time in milliseconds for title to stay.
-     * @param fadeOut time in milliseconds for title to fade out.
+     * Sends a title to the specified player using the Adventure API.
+     * @param player the player who will receive the title.
+     * @param title the title component.
+     * @param subtitle the subtitle component.
+     * @param fadeIn the fade-in time in milliseconds.
+     * @param stay the display time in milliseconds.
+     * @param fadeOut the fade-out time in milliseconds.
      */
     protected void sendTitle(@NotNull Player player, Component title, Component subtitle, int fadeIn, int stay, int fadeOut) {
         var audience = adventure.player(player);
@@ -288,8 +451,8 @@ public abstract class Message {
     }
 
     /**
-     * Applies commands to the server. Should be called when sending message.
-     * @param player player who received the message. Replaced with {PLAYER} placeholder.
+     * Executes configured commands associated with this message.
+     * @param player the player used for placeholder replacement ( {PLAYER} ).
      */
     protected void applyCommands(@NotNull Player player) {
         for(String command : commands) {
@@ -303,7 +466,9 @@ public abstract class Message {
     }
 
     /**
-     * @return delay in ticks for the message. Default is 0 if not specified in config file.
+     * Returns the delay for this message in ticks.
+     * Defaults to 0 if not specified.
+     * @return the message delay in server ticks.
      */
     public Integer getMessageDelay() {
         return Objects.requireNonNullElse(messageDelay, 0);

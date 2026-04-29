@@ -1,10 +1,11 @@
 plugins {
     id 'java'
+    id 'maven-publish'
     id 'com.gradleup.shadow' version '8.3.3'
 }
 
 group = 'me.kubaw208'
-version = '1.0-SNAPSHOT'
+version = '1.0.0'
 
 repositories {
     mavenCentral()
@@ -60,12 +61,19 @@ processResources {
     }
 }
 
+publishing {
+    publications {
+        gpr(MavenPublication) {
+            artifactId = "messageapi"
+            from(components.java)
+        }
+    }
+}
+
 shadowJar {
     if (project.hasProperty('shadowJar_destinationDirectory')) {
         destinationDirectory.set(file(getProperty('shadowJar_destinationDirectory')))
     }
-
-    relocate "net.kyori", "me.kubaw208.messageapi.libs.kyori"
 
     archiveFileName = "${project.name}.jar"
     exclude "hotswap-agent.properties"
