@@ -3,7 +3,6 @@
 [![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/KubawGaming/MessageAPI/releases)
 [![Java](https://img.shields.io/badge/Java-17+-orange.svg)](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
 [![Paper](https://img.shields.io/badge/Paper-1.17+-green.svg)](https://papermc.io/)
-[![License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
 
 A lightweight message management library for Minecraft Paper servers. Simplifies sending chat messages, titles, action bars, and more with MiniMessage support, animations, and sound integration.
 
