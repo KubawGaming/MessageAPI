@@ -133,8 +133,7 @@ public abstract class Message {
      * @return this Message instance for chaining.
      */
     public Message sendTo(@NotNull Player player) {
-        sendToInternal(player, getMessageDelay());
-        return this;
+        return sendToInternal(player, getMessageDelay());
     }
 
     /**
@@ -144,8 +143,7 @@ public abstract class Message {
      * @return this Message instance for chaining.
      */
     public Message sendTo(@NotNull Player player, int delayInTicks) {
-        sendToInternal(player, delayInTicks);
-        return this;
+        return sendToInternal(player, delayInTicks);
     }
 
     /**
