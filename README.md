@@ -41,15 +41,16 @@ Message message = new ChatMessage("<green>Hello, <player>!")
 ### Animated Title with Sound Example
 ```java
 SoundableMessage title = new AnimatedTitleMessage(List.of(
-    new TitleAnimationData("<gold>Frame 1", "<gray>Subtitle 1", 10, 40, 10, 20),
-    new TitleAnimationData("<yellow>Frame 2", "<gray>Subtitle 2", 10, 40, 10, 20),
-    new TitleAnimationData("<red>Frame 3", "<gray>Subtitle 3", 10, 40, 10, 20)
+        new TitleAnimationData("<red>WARNING", "<gray>You", 10, 40, 10, 20),
+        new TitleAnimationData("<red>WARNING", "<gray>are", 10, 40, 10, 20),
+        new TitleAnimationData("<red>WARNING", "<gray>low HP!", 10, 40, 10, 20)
 ));
 
 title.setSoundPaths(List.of("minecraft:entity.experience_orb.pickup"))
-    .setSoundVolume(1f)
-    .setSoundPitch(0.5f)
-    .sendTo(player);
+        .setSoundVolume(1f)
+        .setSoundPitch(0.5f)
+        // Only send to players with less than 10 health
+        .sendTo(Bukkit.getOnlinePlayers(), player -> player.getHealth() < 10);
 ```
 
 ## 🚀 Installation
