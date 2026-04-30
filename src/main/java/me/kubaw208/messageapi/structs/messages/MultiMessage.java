@@ -13,11 +13,11 @@ import java.util.List;
 
 public class MultiMessage extends SoundableMessage {
 
-    @Getter private final List<Message> messages;
+    @Getter private ArrayList<Message> messages;
 
     @JsonCreator
     public MultiMessage(@NotNull @JsonProperty("messages") List<Message> messages) {
-        this.messages = messages;
+        this.messages = new ArrayList<>(messages);
     }
 
     @Override
@@ -44,11 +44,7 @@ public class MultiMessage extends SoundableMessage {
 
     @Override
     public MultiMessage clone() {
-        try {
-            return (MultiMessage) super.clone();
-        } catch(CloneNotSupportedException e) {
-            throw new AssertionError();
-        }
+        return (MultiMessage) super.clone();
     }
 
 }

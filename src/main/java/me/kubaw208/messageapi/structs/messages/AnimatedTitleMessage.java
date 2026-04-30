@@ -30,7 +30,7 @@ public class AnimatedTitleMessage extends SoundableMessage {
 
     @Getter private static final HashMap<Player, BetterRunnable> animatedTitleTasks = new HashMap<>();
 
-    @JsonProperty("animatedTitle") private final List<TitleAnimationData> frames;
+    @JsonProperty("animatedTitle") private ArrayList<TitleAnimationData> frames;
     @Setter private Integer defaultTime = null;
     @Setter private Integer defaultFadeIn = null;
     @Setter private Integer defaultStay = null;
@@ -38,7 +38,7 @@ public class AnimatedTitleMessage extends SoundableMessage {
 
     @JsonCreator
     public AnimatedTitleMessage(@NotNull @JsonProperty("animatedTitle") List<TitleAnimationData> frames) {
-        this.frames = frames;
+        this.frames = new ArrayList<>(frames);
     }
 
     @Override
@@ -114,21 +114,12 @@ public class AnimatedTitleMessage extends SoundableMessage {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public AnimatedTitleMessage clone() {
-        try {
-            AnimatedTitleMessage cloned = (AnimatedTitleMessage) super.clone();
-            List<TitleAnimationData> clonedFrames = new ArrayList<>();
+        AnimatedTitleMessage cloned = (AnimatedTitleMessage) super.clone();
 
-            for(TitleAnimationData frame : this.frames) {
-                clonedFrames.add(frame.clone());
-            }
-
-            cloned.getFrames().clear();
-            cloned.getFrames().addAll(clonedFrames);
-            return cloned;
-        } catch (CloneNotSupportedException e) {
-            throw new AssertionError();
-        }
+        cloned.frames = (ArrayList<TitleAnimationData>) frames.clone();
+        return cloned;
     }
 
 }

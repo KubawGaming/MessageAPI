@@ -1,9 +1,6 @@
 package me.kubaw208.messageapi.structs;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
 import me.kubaw208.betterrunnableapi.BetterDelayedRunnable;
 import me.kubaw208.messageapi.utils.Utils;
 import org.bukkit.Location;
@@ -23,8 +20,11 @@ public abstract class SoundableMessage extends LocalizedMessage {
 
     @JsonProperty("sound") private SoundSettings soundSettings = null;
 
-    // Override for setter chaining to SoundableMessage
-    @Getter @Setter @Accessors(chain = true) private List<String> commands = new ArrayList<>();
+    // Override setter for chaining to LocalizedMessage
+    public SoundableMessage setCommands(List<String> commands) {
+        this.commands = commands;
+        return this;
+    }
 
     /**
      * Sets the location where the sound will be played.
@@ -46,18 +46,27 @@ public abstract class SoundableMessage extends LocalizedMessage {
      * @param player the player who received the message.
      */
     protected void applySound(@NotNull Player player) {
-        if(soundSettings.getPaths().isEmpty()) return;
+        if(getSoundPaths().isEmpty()) return;
 
         new BetterDelayedRunnable(plugin, task -> {
             if(!player.isOnline()) return;
 
             Location location = getLocation() != null ? getLocation() : player.getLocation();
-            var sound = soundSettings.getPaths().get(
-                    soundSettings.getPaths().size() == 1 ? 0 : Utils.getRandom(0, soundSettings.getPaths().size() - 1)
+            var sound = getSoundPaths().get(
+                    getSoundPaths().size() == 1 ? 0 : Utils.getRandom(0, getSoundPaths().size() - 1)
             );
 
-            player.playSound(location, sound, soundSettings.getVolume(), soundSettings.getPitch());
-        }, soundSettings.getDelay());
+            player.playSound(location, sound, getSoundVolume(), getSoundPitch());
+        }, getSoundDelay());
+    }
+
+    /**
+     * Returns the configured sound paths.
+     * @return list of sound identifiers or empty list if not set.
+     */
+    public List<String> getSoundPaths() {
+        return soundSettings == null ? new ArrayList<>() :
+                soundSettings.getPaths() != null ? soundSettings.getPaths() : new ArrayList<>();
     }
 
     /**
@@ -82,10 +91,11 @@ public abstract class SoundableMessage extends LocalizedMessage {
 
     /**
      * Returns the configured sound delay.
-     * @return delay in ticks or null if not set.
+     * @return delay in ticks or default 0 if not set.
      */
     public Integer getSoundDelay() {
-        return soundSettings == null ? null : soundSettings.getDelay();
+        return soundSettings == null ? 0 :
+                soundSettings.getDelay() != null ? soundSettings.getDelay() : 0;
     }
 
     /**
@@ -103,10 +113,11 @@ public abstract class SoundableMessage extends LocalizedMessage {
 
     /**
      * Returns the configured sound volume.
-     * @return volume or null if not set.
+     * @return volume or default 1.0 if not set.
      */
     public Float getSoundVolume() {
-        return soundSettings == null ? null : soundSettings.getVolume();
+        return soundSettings == null ? 1.0f :
+                soundSettings.getVolume() != null ? soundSettings.getVolume() : 1.0f;
     }
 
     /**
@@ -124,10 +135,11 @@ public abstract class SoundableMessage extends LocalizedMessage {
 
     /**
      * Returns the configured sound pitch.
-     * @return pitch or null if not set.
+     * @return pitch or default 1.0 if not set.
      */
     public Float getSoundPitch() {
-        return soundSettings == null ? null : soundSettings.getPitch();
+        return soundSettings == null ? 1.0f :
+                soundSettings.getPitch() != null ? soundSettings.getPitch() : 1.0f;
     }
 
     /**
@@ -141,6 +153,14 @@ public abstract class SoundableMessage extends LocalizedMessage {
 
         soundSettings.setPitch(pitch);
         return this;
+    }
+
+    @Override
+    public SoundableMessage clone() {
+        SoundableMessage cloned = (SoundableMessage) super.clone();
+
+        this.soundSettings = this.soundSettings != null ? this.soundSettings.clone() : null;
+        return cloned;
     }
 
 }

@@ -28,12 +28,12 @@ public class AnimatedActionBarMessage extends SoundableMessage {
 
     @Getter private static final HashMap<Player, BetterRunnable> animatedActionBarTasks = new HashMap<>();
 
-    @JsonProperty("animatedActionBar") private final List<ActionBarAnimationData> frames;
+    @JsonProperty("animatedActionBar") private ArrayList<ActionBarAnimationData> frames;
     @Setter private Integer defaultTime = null;
 
     @JsonCreator
     public AnimatedActionBarMessage(@NotNull @JsonProperty("animatedActionBar") List<ActionBarAnimationData> frames) {
-        this.frames = frames;
+        this.frames = new ArrayList<>(frames);
     }
 
     @Override
@@ -108,21 +108,12 @@ public class AnimatedActionBarMessage extends SoundableMessage {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public AnimatedActionBarMessage clone() {
-        try {
-            AnimatedActionBarMessage cloned = (AnimatedActionBarMessage) super.clone();
-            List<ActionBarAnimationData> clonedFrames = new ArrayList<>();
+        AnimatedActionBarMessage cloned = (AnimatedActionBarMessage) super.clone();
 
-            for(ActionBarAnimationData frame : this.frames) {
-                clonedFrames.add(frame.clone());
-            }
-
-            cloned.getFrames().clear();
-            cloned.getFrames().addAll(clonedFrames);
-            return cloned;
-        } catch (CloneNotSupportedException e) {
-            throw new AssertionError();
-        }
+        cloned.frames = (ArrayList<ActionBarAnimationData>) frames.clone();
+        return cloned;
     }
 
 }

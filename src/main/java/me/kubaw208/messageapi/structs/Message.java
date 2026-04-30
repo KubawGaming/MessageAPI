@@ -16,6 +16,7 @@ import net.kyori.adventure.title.TitlePart;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -44,7 +45,7 @@ import java.util.function.Predicate;
         isGetterVisibility = JsonAutoDetect.Visibility.NONE
 )
 @Getter
-public abstract class Message {
+public abstract class Message implements Cloneable {
 
     protected static JavaPlugin plugin;
     private static BukkitAudiences adventure;
@@ -53,7 +54,7 @@ public abstract class Message {
     private static final Set<Class<?>> registeredMessageTypes = ConcurrentHashMap.newKeySet();
 
     @JsonProperty("messageDelay") @Setter @Accessors(chain = true) private Integer messageDelay = null;
-    @Setter @Accessors(chain = true) private List<String> commands = new ArrayList<>();
+    @Setter @Accessors(chain = true) protected List<String> commands = new ArrayList<>();
 
     /**
      * Initializes the message system with the given plugin instance and registers default message types.
@@ -610,8 +611,8 @@ public abstract class Message {
      * @param player the player who will receive the message.
      * @param message the message component to send.
      */
-    protected void sendMessage(@NotNull Player player, Component message) {
-        adventure.player(player).sendMessage(message != null ? message : Component.empty());
+    protected void sendMessage(@NotNull CommandSender player, Component message) {
+        adventure.sender(player).sendMessage(message != null ? message : Component.empty());
     }
 
     /**
@@ -669,6 +670,20 @@ public abstract class Message {
      */
     public Integer getMessageDelay() {
         return Objects.requireNonNullElse(messageDelay, 0);
+    }
+
+    @Override
+    public Message clone() {
+        try {
+            Message cloned = (Message) super.clone();
+
+            if(commands != null)
+                cloned.commands = new ArrayList<>(commands);
+
+            return cloned;
+        } catch(CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 
 }

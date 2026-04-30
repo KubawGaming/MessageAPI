@@ -13,13 +13,18 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ActionBarAnimationData {
+public class ActionBarAnimationData implements Cloneable {
 
     private String message;
     private Integer time;
 
+    @Override
     public ActionBarAnimationData clone() {
-        return new ActionBarAnimationData(message, time);
+        try {
+            return (ActionBarAnimationData) super.clone();
+        } catch(CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 
 }

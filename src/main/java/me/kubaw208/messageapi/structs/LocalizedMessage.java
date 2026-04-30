@@ -6,7 +6,6 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.bukkit.Location;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,7 +20,18 @@ public abstract class LocalizedMessage extends Message {
 
     @JsonIgnore @Setter @Accessors(chain = true) private Location location = null;
 
-    // Override for setter chaining to LocalizedMessage
-    @Setter @Accessors(chain = true) private List<String> commands = new ArrayList<>();
+    // Override setter for chaining to LocalizedMessage
+    public LocalizedMessage setCommands(List<String> commands) {
+        this.commands = commands;
+        return this;
+    }
+
+    @Override
+    public LocalizedMessage clone() {
+        LocalizedMessage cloned = (LocalizedMessage) super.clone();
+
+        cloned.location = location != null ? location.clone() : null;
+        return cloned;
+    }
 
 }

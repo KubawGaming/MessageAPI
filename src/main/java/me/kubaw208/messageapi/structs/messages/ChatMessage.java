@@ -41,7 +41,10 @@ public class ChatMessage extends SoundableMessage {
      * @param colors if true, message will be sent with colors, otherwise it will be sent without colors.
      */
     public void sendToConsole(boolean colors) {
-        Bukkit.getConsoleSender().sendMessage(colors ? Utils.hexComponent(message) : Component.text(message));
+        sendMessage(
+                Bukkit.getConsoleSender(),
+                colors ? Utils.hexComponent(message) : Component.text(message)
+        );
     }
 
     /**
@@ -53,11 +56,7 @@ public class ChatMessage extends SoundableMessage {
 
     @Override
     public ChatMessage clone() {
-        try {
-            return (ChatMessage) super.clone();
-        } catch(CloneNotSupportedException e) {
-            throw new AssertionError();
-        }
+        return (ChatMessage) super.clone();
     }
 
 }

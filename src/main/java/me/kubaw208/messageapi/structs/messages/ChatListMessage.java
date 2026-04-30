@@ -15,11 +15,11 @@ import java.util.List;
 
 public class ChatListMessage extends SoundableMessage {
 
-    @JsonProperty("list") @Getter private final List<String> messages;
+    @JsonProperty("list") @Getter private ArrayList<String> messages;
 
     @JsonCreator
     public ChatListMessage(@NotNull @JsonProperty("list") List<String> messages) {
-        this.messages = messages;
+        this.messages = new ArrayList<>(messages);
     }
 
     @Override
@@ -36,7 +36,7 @@ public class ChatListMessage extends SoundableMessage {
     @Override
     public ChatListMessage replace(@NotNull String toReplace, @NotNull String replaced) {
         ChatListMessage cloned = this.clone();
-        ArrayList<String> replacedMessages = new ArrayList<>();
+        List<String> replacedMessages = new ArrayList<>();
 
         for(String message : cloned.getMessages()) {
             replacedMessages.add(message.replace(toReplace, replaced));
@@ -53,7 +53,10 @@ public class ChatListMessage extends SoundableMessage {
      */
     public void sendToConsole(boolean colors) {
         for(String message : messages) {
-            Bukkit.getConsoleSender().sendMessage(colors ? Utils.hexComponent(message) : Component.text(message));
+            sendMessage(
+                    Bukkit.getConsoleSender(),
+                    colors ? Utils.hexComponent(message) : Component.text(message)
+            );
         }
     }
 
@@ -65,16 +68,12 @@ public class ChatListMessage extends SoundableMessage {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public ChatListMessage clone() {
-        try {
-            ChatListMessage cloned = (ChatListMessage) super.clone();
+        ChatListMessage cloned = (ChatListMessage) super.clone();
 
-            cloned.getMessages().clear();
-            cloned.getMessages().addAll(new ArrayList<>(this.messages));
-            return cloned;
-        } catch(CloneNotSupportedException e) {
-            throw new AssertionError();
-        }
+        cloned.messages = (ArrayList<String>) messages.clone();
+        return cloned;
     }
 
 }

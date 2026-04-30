@@ -36,11 +36,7 @@ public class ActionBarMessage extends SoundableMessage {
 
     @Override
     public ActionBarMessage clone() {
-        try {
-            return (ActionBarMessage) super.clone();
-        } catch(CloneNotSupportedException e) {
-            throw new AssertionError();
-        }
+        return (ActionBarMessage) super.clone();
     }
 
 }

@@ -143,8 +143,8 @@ message.setMessageDelay(40).sendTo(player);</code></pre>
     <pre><code>reward-message:
   message: "&lt;gold&gt;Reward claimed!"
   commands:
-    - "give {PLAYER} diamond 1"
-    - "effect give {PLAYER} speed 30 1"</code></pre>
+  - "give {PLAYER} diamond 1"
+  - "effect give {PLAYER} speed 30 1"</code></pre>
 
     <h3>Developer Usage</h3>
     <pre><code>Message message = new ChatMessage("&lt;gold&gt;Reward claimed!");
@@ -172,23 +172,23 @@ message.sendTo(player);</code></pre>
   message: "&lt;green&gt;Level Up!"
   sound:
     paths:
-      - "entity.player.levelup"</code></pre>
+    - "entity.player.levelup"</code></pre>
 
     <h4>Multiple Sounds (Random Selection)</h4>
     <pre><code>notification-message:
   message: "&lt;yellow&gt;Notification!"
   sound:
     paths:
-      - "block.note_block.pling"
-      - "block.note_block.chime"
-      - "block.note_block.bell"</code></pre>
+    - "block.note_block.pling"
+    - "block.note_block.chime"
+    - "block.note_block.bell"</code></pre>
 
     <h4>Advanced Configuration</h4>
     <pre><code>custom-message:
   message: "&lt;gold&gt;Custom Sound!"
   sound:
     paths:
-      - "entity.player.levelup"
+    - "entity.player.levelup"
     delay: 10      # Ticks before playing sound (default: 0)
     volume: 1.0    # Sound volume (default: 1.0)
     pitch: 1.0     # Sound pitch (default: 1.0)</code></pre>

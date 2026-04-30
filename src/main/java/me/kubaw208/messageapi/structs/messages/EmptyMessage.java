@@ -26,11 +26,7 @@ public class EmptyMessage extends SoundableMessage {
 
     @Override
     public EmptyMessage clone() {
-        try {
-            return (EmptyMessage) super.clone();
-        } catch(CloneNotSupportedException e) {
-            throw new AssertionError();
-        }
+        return (EmptyMessage) super.clone();
     }
 
 }

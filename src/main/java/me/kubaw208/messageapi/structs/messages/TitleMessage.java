@@ -61,11 +61,7 @@ public class TitleMessage extends SoundableMessage {
 
     @Override
     public TitleMessage clone() {
-        try {
-            return (TitleMessage) super.clone();
-        } catch(CloneNotSupportedException e) {
-            throw new AssertionError();
-        }
+        return (TitleMessage) super.clone();
     }
 
 }
