@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChatMessage - MessageAPI</title>
+    <title>TitleMessage - MessageAPI</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -55,14 +55,14 @@
 
         .note {
             background-color: #2a2a2a;
-            border-left: 4px solid #2ecc71;
+            border-left: 4px solid #f39c12;
             padding: 15px;
             margin-bottom: 20px;
             border-radius: 5px;
         }
 
         .note strong {
-            color: #2ecc71;
+            color: #f39c12;
         }
 
         hr {
@@ -73,76 +73,64 @@
     </style>
 </head>
 <body>
-    <h1>ChatMessage</h1>
+    <h1>TitleMessage</h1>
 
-    <p>The most basic message type for sending standard chat messages to players. Supports MiniMessage formatting, placeholders, sounds, and commands.</p>
+    <p>Display large titles and subtitles in the center of the screen.</p>
 
     <hr>
 
     <h2>Configuration (YAML)</h2>
 
-    <pre><code>welcome-message:
-  message: "&lt;green&gt;Welcome to the server, &lt;player&gt;!"
+    <h3>Full Example</h3>
+    <pre><code>welcome-title:
+  title: "&lt;gold&gt;&lt;bold&gt;WELCOME"
+  subtitle: "&lt;gray&gt;to our server, {PLAYER}!"
+  fadeIn: 10
+  stay: 60
+  fadeOut: 20
   commands:
   - "give {PLAYER} diamond 1"
-  - "effect give {PLAYER} speed 30 1"
-  messageDelay: 20
+  messageDelay: 40
   sound:
     paths:
-    - "entity.player.levelup"
     - "ui.toast.challenge_complete"
+    - "entity.player.levelup"
     delay: 10
     volume: 1.0
     pitch: 1.2</code></pre>
+
+    <div class="note">
+        <strong>Note:</strong> Both <code>title</code> and <code>subtitle</code> are optional. You can omit either field, and it will be treated as empty.
+    </div>
+
+    <h3>Minimal Example (Title Only)</h3>
+    <pre><code>simple-title:
+  title: "&lt;red&gt;&lt;bold&gt;WARNING!"
+  fadeIn: 10
+  stay: 40
+  fadeOut: 10</code></pre>
 
     <hr>
 
     <h2>Developer Usage</h2>
 
     <h3>Basic Usage</h3>
-    <pre><code>ChatMessage message = new ChatMessage("&lt;green&gt;Hello, world!");
+    <pre><code>TitleMessage message = new TitleMessage("&lt;gold&gt;&lt;bold&gt;WELCOME", "&lt;gray&gt;Enjoy your stay!", 10, 60, 20);
 message.sendTo(player);</code></pre>
 
     <h3>With Placeholders</h3>
-    <pre><code>ChatMessage message = new ChatMessage("&lt;aqua&gt;Welcome, {PLAYER}!");
-message.replace("{PLAYER}", player.getName())
+    <pre><code>TitleMessage message = new TitleMessage(
+    "&lt;aqua&gt;Player Stats",
+    "&lt;gray&gt;Level: {LEVEL} | Kills: {KILLS}",
+    10, 60, 20
+);
+message.replace("{LEVEL}", player.getLevel())
+       .replace("{KILLS}", 150)
        .sendTo(player);</code></pre>
 
-    <h3>Broadcasting</h3>
-    <pre><code>ChatMessage message = new ChatMessage("&lt;red&gt;&lt;bold&gt;Server Announcement!");
-message.broadcast();
-
-// Broadcast to specific world
-message.sendTo(world);
-
-// Broadcast with permission
-message.broadcast("myplugin.announcements");</code></pre>
-
-    <h3>Conditional Sending (Predicates)</h3>
-    <pre><code>ChatMessage message = new ChatMessage("&lt;gold&gt;VIP Announcement!");
-
-// Send to all online players matching a condition
-message.broadcast(player -> player.getLevel() > 10);
-
-// Send to single player if condition matches
-message.sendTo(player, p -> p.getHealth() < 5.0);
-</code></pre>
-
-    <hr>
-
-    <h2>Console Messages</h2>
-
-    <div class="note">
-        <strong>Special Feature:</strong> ChatMessage has built-in console support for logging or debugging.
-    </div>
-
-    <h3>Send to Console (with colors)</h3>
-    <pre><code>ChatMessage message = new ChatMessage("&lt;green&gt;Server started successfully!");
-message.sendToConsole();</code></pre>
-
-    <h3>Send to Console (without colors)</h3>
-    <pre><code>ChatMessage message = new ChatMessage("&lt;green&gt;Server started successfully!");
-message.sendToConsole(false); // Plain text only</code></pre>
+    <h3>Title Only (No Subtitle)</h3>
+    <pre><code>TitleMessage message = new TitleMessage("&lt;red&gt;&lt;bold&gt;WARNING!", null, 10, 40, 10);
+message.sendTo(player);</code></pre>
 
 </body>
 </html>
