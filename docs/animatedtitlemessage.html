@@ -109,22 +109,28 @@
 <body>
     <h1>AnimatedTitleMessage</h1>
 
-    <p>Displays a sequence of titles as an animation. Each frame can have its own timing and display settings.</p>
+    <p>Displays a sequence of titles (with optional subtitles) as an animation. Each frame can have its own timing and display settings.</p>
 
     <hr>
 
     <h2>Configuration (YAML)</h2>
 
-    <h3>Basic Animation with defaultTime</h3>
-    <pre><code>animatedTitleMessage:
-  defaultTime: 40
-  defaultStay: 2000
-  defaultFadeOut: 200
-  animatedTitle:
+    <h3>Full Configuration (Every Frame with Explicit Values)</h3>
+    <pre><code>animated-title:
+  messageType: ANIMATED_TITLE
+  frames:
   - title: "&lt;red&gt;&lt;bold&gt;ROUND 1"
     subtitle: "&lt;gray&gt;Get ready!"
-  - title: "&lt:yellow&gt;&lt;bold&gt;FIGHT!"
+    fadeIn: 0
+    stay: 2200
+    fadeOut: 0
+    time: 40
+  - title: "&lt;yellow&gt;&lt;bold&gt;FIGHT!"
     subtitle: "&lt;red&gt;GO GO GO!"
+    fadeIn: 0
+    stay: 2200
+    fadeOut: 800
+    time: 40
   commands:
   - "give {PLAYER} diamond 1"
   sound:
@@ -134,22 +140,26 @@
     volume: 1.0
     pitch: 1.0</code></pre>
 
-    <h3>Individual Frame Settings (Override Defaults)</h3>
-    <pre><code>animatedTitleMessage:
-  defaultTime: 30
-  defaultStay: 1500
-  defaultFadeOut: 100
-  animatedTitle:
-  - title: "&lt;gold&gt;LEVEL 1"
-    subtitle: "&lt;gray&gt;Easy"
-    time: 60
-    stay: 80
-  - title: "&lt:yellow&gt;LEVEL 2"
-    subtitle: "&lt;gray&gt;Medium"
-  - title: "&lt;red&gt;&lt;bold&gt;LEVEL 3"
-    subtitle: "&lt;dark_red&gt;HARD"
-    stay: 1000
-    fadeOut: 200</code></pre>
+    <h3>Simplified with Default Values (Much Cleaner)</h3>
+    <pre><code>animated-title:
+  messageType: ANIMATED_TITLE
+  defaultTime: 40
+  defaultFadeIn: 0
+  defaultStay: 2200
+  defaultFadeOut: 800
+  frames:
+  - title: "&lt;red&gt;&lt;bold&gt;ROUND 1"
+    subtitle: "&lt;gray&gt;Get ready!"
+  - title: "&lt;yellow&gt;&lt;bold&gt;FIGHT!"
+    subtitle: "&lt;red&gt;GO GO GO!"
+  commands:
+  - "give {PLAYER} diamond 1"
+  sound:
+    paths:
+    - "minecraft:entity.player.levelup"
+    delay: 10
+    volume: 1.0
+    pitch: 1.0</code></pre>
 
     <div class="note">
         <strong>Default Values:</strong> The following defaults can be set at the root level and apply to all frames unless overridden:

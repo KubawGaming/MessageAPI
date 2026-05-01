@@ -75,22 +75,23 @@
 <body>
     <h1>ChatMessage</h1>
 
-    <p>The most basic message type for sending standard chat messages to players. Supports MiniMessage formatting, placeholders, sounds, and commands.</p>
+    <p>The most basic message type for sending standard chat messages to players.</p>
 
     <hr>
 
     <h2>Configuration (YAML)</h2>
 
     <pre><code>welcome-message:
-  message: "&lt;green&gt;Welcome to the server, &lt;player&gt;!"
+  messageType: CHAT
+  message: "&lt;green&gt;Welcome to the server, {PLAYER}!"
+  messageDelay: 20
   commands:
   - "give {PLAYER} diamond 1"
   - "effect give {PLAYER} speed 30 1"
-  messageDelay: 20
   sound:
     paths:
-    - "entity.player.levelup"
-    - "ui.toast.challenge_complete"
+    - "minecraft:entity.player.levelup"
+    - "minecraft:ui.toast.challenge_complete"
     delay: 10
     volume: 1.0
     pitch: 1.2</code></pre>

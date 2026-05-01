@@ -17,17 +17,17 @@ public class TitleMessage extends SoundableMessage {
 
     @JsonProperty("title") private String title;
     @JsonProperty("subtitle") private String subtitle;
-    @JsonProperty("fadeIn") private int fadeIn;
-    @JsonProperty("stay") private int stay;
-    @JsonProperty("fadeOut") private int fadeOut;
+    @JsonProperty("fadeIn") private Integer fadeIn;
+    @JsonProperty("stay") private Integer stay;
+    @JsonProperty("fadeOut") private Integer fadeOut;
 
     @JsonCreator
     public TitleMessage(
             @JsonProperty("title") String title,
             @JsonProperty("subtitle") String subtitle,
-            @JsonProperty("fadeIn") int fadeIn,
-            @JsonProperty("stay") int stay,
-            @JsonProperty("fadeOut") int fadeOut
+            @JsonProperty("fadeIn") Integer fadeIn,
+            @JsonProperty("stay") Integer stay,
+            @JsonProperty("fadeOut") Integer fadeOut
     ) {
         this.title = title;
         this.subtitle = subtitle;
@@ -43,9 +43,9 @@ public class TitleMessage extends SoundableMessage {
         sendTitle(player,
                 Utils.hexComponent(title),
                 Utils.hexComponent(subtitle),
-                fadeIn,
-                stay,
-                fadeOut
+                fadeIn != null ? fadeIn : 0,
+                stay != null ? stay : 1000,
+                fadeOut != null ? fadeOut : 0
         );
         return this;
     }

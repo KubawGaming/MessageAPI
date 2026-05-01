@@ -81,10 +81,12 @@
 
     <h2>Configuration (YAML)</h2>
 
-    <pre><code>multi-message:
+    <pre><code>welcome-sequence:
+  messageType: MULTI
   messages:
   # Message 1 (ChatMessage)
-  - message: "&lt;green&gt;Welcome to the server!"
+  - messageType: CHAT
+    message: "&lt;green&gt;Welcome to the server!"
     commands:
     - "say {PLAYER} joined!"
     - "give {PLAYER} diamond 1"
@@ -95,7 +97,8 @@
       volume: 1.0
       pitch: 1.2
   # Message 2 (TitleMessage)
-  - title: "&lt;gold&gt;&lt;bold&gt;WELCOME"
+  - messageType: TITLE
+    title: "&lt;gold&gt;&lt;bold&gt;WELCOME"
     subtitle: "&lt;gray&gt;Enjoy your stay!"
     fadeIn: 10
     stay: 60
@@ -109,7 +112,8 @@
       volume: 0.8
       pitch: 1.0
   # Message 3 (ActionBarMessage)
-  - actionbar: "&lt;yellow&gt;Type /help to get started"
+  - messageType: ACTIONBAR
+    message: "&lt;yellow&gt;Type /help to get started"
     messageDelay: 20</code></pre>
 
     <hr>

@@ -99,9 +99,10 @@
     <h2>Configuration (YAML)</h2>
 
     <h3>With defaultTime</h3>
-    <pre><code>animatedActionBarMessage:
+    <pre><code>animated-actionbar:
+  messageType: ANIMATED_ACTIONBAR
   defaultTime: 20
-  animatedActionBar:
+  frames:
   - message: "&lt;red&gt;▪▪▪▪▪"
   - message: "&lt;yellow&gt;▪&lt;red&gt;▪▪▪▪"
   - message: "&lt;yellow&gt;▪▪&lt;red&gt;▪▪▪"
@@ -118,9 +119,10 @@
     pitch: 1.0</code></pre>
 
     <h3>Individual frame timing (overrides defaultTime)</h3>
-    <pre><code>animatedActionBarMessage:
+    <pre><code>animated-actionbar:
+  messageType: ANIMATED_ACTIONBAR
   defaultTime: 30
-  animatedActionBar:
+  frames:
   - message: "&lt;yellow&gt;Loading."
   - message: "&lt;yellow&gt;Loading.."
   - message: "&lt;yellow&gt;Loading..."

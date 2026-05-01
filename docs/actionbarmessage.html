@@ -70,14 +70,15 @@
     <h2>Configuration (YAML)</h2>
 
     <pre><code>health-warning:
-  actionbar: "&lt;red&gt;⚠ Low Health: {HEALTH}/20"
+  messageType: ACTIONBAR
+  message: "&lt;red&gt;⚠ Low Health: {HEALTH}/20"
+  messageDelay: 40
   commands:
   - "effect give {PLAYER} regeneration 5 1"
-  messageDelay: 40
   sound:
     paths:
-    - "block.note_block.bass"
-    - "entity.experience_orb.pickup"
+    - "minecraft:block.note_block.bass"
+    - "minecraft:entity.experience_orb.pickup"
     delay: 10
     volume: 0.5
     pitch: 0.8</code></pre>

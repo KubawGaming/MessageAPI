@@ -82,17 +82,18 @@
     <h2>Configuration (YAML)</h2>
 
     <pre><code>info-message:
-  list:
+  messageType: CHAT_LIST
+  message:
   - "&lt;green&gt;========== Server Info =========="
-  - "&lt;yellow&gt;Players online: &lt;count&gt;"
-  - "&lt;yellow&gt;Server uptime: &lt;uptime&gt;"
+  - "&lt;yellow&gt;Players online: {ONLINE}"
+  - "&lt;yellow&gt;Server uptime: {UPTIME}"
   - "&lt;green&gt;================================="
+  messageDelay: 20
   commands:
   - "give {PLAYER} diamond 1"
-  messageDelay: 20
   sound:
     paths:
-    - "block.note_block.pling"
+    - "minecraft:block.note_block.pling"
     volume: 0.8
     pitch: 1.0</code></pre>
 
@@ -101,7 +102,7 @@
     <h2>Developer Usage</h2>
 
     <h3>Basic Usage</h3>
-    <pre><code>Message message = new ChatListMessage(List.of(
+    <pre><code>ChatListMessage message = new ChatListMessage(List.of(
     "&lt;green&gt;========== Welcome ===========",
     "&lt;yellow&gt;Enjoy your stay!",
     "&lt;green&gt;=============================="
@@ -109,15 +110,15 @@
 message.sendTo(player);</code></pre>
 
     <h3>With Placeholders</h3>
-    <pre><code>Message message = new ChatListMessage(List.of(
+    <pre><code>ChatListMessage message = new ChatListMessage(List.of(
     "&lt;aqua&gt;Player Stats:",
     "&lt;gray&gt;Name: {NAME}",
     "&lt;gray&gt;Level: {LEVEL}",
     "&lt;gray&gt;Balance: {BALANCE}"
 ));
 message.replace("{NAME}", player.getName())
-       .replace("{LEVEL}", "15")
-       .replace("{BALANCE}", "$1000")
+       .replace("{LEVEL}", 15)
+       .replace("{BALANCE}", 1000)
        .sendTo(player);</code></pre>
 
     <hr>

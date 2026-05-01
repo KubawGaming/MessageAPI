@@ -123,6 +123,7 @@
         <li><code>sendTo*()</code> - Built-in delivery methods (broadcast, permission filters, radius, predicates)</li>
         <li><code>replace()</code> - Placeholder replacement system</li>
         <li><code>clone()</code> - Immutable operations support</li>
+        <li><code>adventure</code> - BukkitAudiences instance for custom delivery</li>
         <li>Utility methods: <code>sendMessage()</code>, <code>sendActionBar()</code>, <code>sendTitle()</code>, <code>applyCommands()</code></li>
     </ul>
 
@@ -139,95 +140,48 @@
 
     <hr>
 
-    <h2>Creating a Custom Message</h2>
+    <h2>Creating a Custom Message - BossBar Example</h2>
 
-    <h3>1. Minimal Implementation (No Sound, No Location)</h3>
-    <pre><code>package myplugin.messages;
-
-import me.kubaw208.messageapi.structs.Message;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-
-public class BossBarMessage extends Message {
-
-    private String text;
-    private float progress;
-
-    public BossBarMessage(String text, float progress) {
-        this.text = text;
-        this.progress = progress;
-    }
-
-    @Override
-    protected Message sendToInternal(@NotNull Player player) {
-        applyCommands(player);
-        // Your custom delivery logic here
-        player.getBossBar(...); // Example
-        return this;
-    }
-
-    @Override
-    public Message replace(@NotNull String toReplace, @NotNull String replaced) {
-        BossBarMessage cloned = this.clone();
-        cloned.text = cloned.text.replace(toReplace, replaced);
-        return cloned;
-    }
-
-    @Override
-    public BossBarMessage clone() {
-        return (BossBarMessage) super.clone();
-    }
-}</code></pre>
-
-    <h3>2. With Sound Support</h3>
-    <pre><code>// Change extends from Message to SoundableMessage
-public class BossBarMessage extends SoundableMessage {
-    // Rest of the code remains the same
-}</code></pre>
-
-    <h3>3. Full Example with JSON Support</h3>
-    <pre><code>package myplugin.messages;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
-import lombok.Setter;
-import me.kubaw208.messageapi.structs.SoundableMessage;
-import me.kubaw208.messageapi.utils.Utils;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-
+    <h3>Complete Implementation</h3>
+    <pre><code>@JsonTypeName("BOSSBAR")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class BossBarMessage extends SoundableMessage {
 
-    @JsonProperty("text")
-    private String text;
-
-    @JsonProperty("progress")
-    private float progress;
+    @JsonProperty("message") private String message;
+    @JsonProperty("progress") private float progress;
+    @JsonProperty("color") private BossBar.Color color;
+    @JsonProperty("style") private BossBar.Style style;
 
     @JsonCreator
     public BossBarMessage(
-        @JsonProperty("text") String text,
-        @JsonProperty("progress") float progress
+            @JsonProperty("message") String message,
+            @JsonProperty("progress") float progress,
+            @NotNull @JsonProperty("color") BossBar.Color color,
+            @NotNull @JsonProperty("style") BossBar.Style style
     ) {
-        this.text = text;
+        this.message = message;
         this.progress = progress;
+        this.color = color;
+        this.style = style;
     }
 
     @Override
     protected BossBarMessage sendToInternal(@NotNull Player player) {
         applySound(player);
         applyCommands(player);
-        // Your custom logic
+        
+        adventure.player(player).showBossBar(
+            BossBar.bossBar(Utils.hexComponent(message), progress, color, style)
+        );
         return this;
     }
 
     @Override
     public BossBarMessage replace(@NotNull String toReplace, @NotNull String replaced) {
         BossBarMessage cloned = this.clone();
-        cloned.text = cloned.text.replace(toReplace, replaced);
+        cloned.message = cloned.message.replace(toReplace, replaced);
         return cloned;
     }
 
@@ -239,51 +193,121 @@ public class BossBarMessage extends SoundableMessage {
 
     <hr>
 
-    <h2>JSON Serialization with Jackson</h2>
+    <h2>Step-by-Step Breakdown</h2>
 
-    <p>MessageAPI uses <a href="https://github.com/FasterXML/jackson" style="color: #3498db;">Jackson</a> for YAML/JSON serialization and deserialization. The <code>@JsonProperty</code> annotations define which fields are serialized. <code>@JsonCreator</code> tells Jackson how to reconstruct your message from data.</p>
+    <h3>1. Annotations</h3>
+    <pre><code>@JsonTypeName("BOSSBAR")  // Unique type name for YAML/JSON
+@Getter @Setter            // Lombok - generates getters/setters
+@Accessors(chain = true)   // Enables method chaining (setX().setY())</code></pre>
+
+    <h3>2. Extend the Right Base Class</h3>
+    <pre><code>public class BossBarMessage extends SoundableMessage</code></pre>
+    <p>Use <code>SoundableMessage</code> if you want sound support. Use <code>Message</code> directly if not.</p>
+
+    <h3>3. Define Fields with @JsonProperty</h3>
+    <pre><code>@JsonProperty("message") private String message;
+@JsonProperty("progress") private float progress;
+@JsonProperty("color") private BossBar.Color color;
+@JsonProperty("style") private BossBar.Style style;</code></pre>
+
+    <h3>4. Add @JsonCreator Constructor</h3>
+    <pre><code>@JsonCreator
+public BossBarMessage(
+        @JsonProperty("message") String message,
+        @JsonProperty("progress") float progress,
+        @NotNull @JsonProperty("color") BossBar.Color color,
+        @NotNull @JsonProperty("style") BossBar.Style style
+) {
+    this.message = message;
+    this.progress = progress;
+    this.color = color;
+    this.style = style;
+}</code></pre>
+
+    <h3>5. Override sendToInternal()</h3>
+    <pre><code>@Override
+protected BossBarMessage sendToInternal(@NotNull Player player) {
+    applySound(player);      // Plays configured sound (if any)
+    applyCommands(player);   // Executes configured commands
+    
+    // Your custom delivery logic - access adventure field directly
+    adventure.player(player).showBossBar(
+        BossBar.bossBar(Utils.hexComponent(message), progress, color, style)
+    );
+    return this;
+}</code></pre>
 
     <div class="note">
-        <strong>Why Jackson?</strong> It allows MessageAPI to automatically save/load your custom message configurations to YAML files, and enables polymorphic deserialization (knowing which message type to create based on the data structure).
+        <strong>Note:</strong> The <code>adventure</code> field is <code>protected static</code> in the Message class,
+        so you can access it directly in your custom message type.
     </div>
+
+    <h3>6. Override replace()</h3>
+    <pre><code>@Override
+public BossBarMessage replace(@NotNull String toReplace, @NotNull String replaced) {
+    BossBarMessage cloned = this.clone();
+    cloned.message = cloned.message.replace(toReplace, replaced);
+    return cloned;
+}</code></pre>
+
+    <h3>7. Override clone()</h3>
+    <pre><code>@Override
+public BossBarMessage clone() {
+    return (BossBarMessage) super.clone();
+}</code></pre>
 
     <hr>
 
-    <h2>Registering Custom Type for JSON</h2>
+    <h2>Registering Your Custom Type</h2>
 
     <div class="note">
-        <strong>Important:</strong> Register your custom message type after calling <code>Message.init()</code> to enable JSON deserialization.
+        <strong>Important:</strong> Register your custom message type after calling <code>Message.init()</code>.
     </div>
 
     <pre><code>// During plugin startup
 Message.init(this);
-Message.registerMessageType(BossBarMessage.class);
+Message.registerMessageType(BossBarMessage.class);</code></pre>
 
-// Your custom type is now ready for YAML/JSON</code></pre>
+    <hr>
 
-    <pre><code># config.yml
-my-bossbar:
-  text: "&lt;red&gt;Boss Health: {HEALTH}"
+    <h2>YAML Configuration Example</h2>
+
+    <pre><code>boss-bar:
+  messageType: BOSSBAR
+  message: "&lt;red&gt;Boss Health: {HEALTH}/100"
   progress: 0.75
+  color: "RED"
+  style: "SEGMENTED_10"
   commands:
-  - "say Boss damaged!"
+  - "say Boss took damage!"
   sound:
     paths:
     - "minecraft:entity.ender_dragon.growl"
-    volume: 1.0</code></pre>
+    volume: 1.0
+    pitch: 0.8</code></pre>
 
-    <div class="warning">
-        <strong>Note:</strong> If your message doesn't require sound or location, extend <code>Message</code> directly. Only extend <code>SoundableMessage</code> if you want sound effects.
-    </div>
+    <hr>
+
+    <h2>Developer Usage</h2>
+
+    <pre><code>BossBarMessage bossBar = new BossBarMessage(
+    "&lt;red&gt;Dragon Fight!",
+    0.5f,
+    BossBar.Color.RED,
+    BossBar.Style.SEGMENTED_10
+);
+bossBar.setCommands(List.of("effect give {PLAYER} strength 10 1"))
+       .setSoundPaths(List.of("minecraft:entity.ender_dragon.growl"))
+       .sendTo(player);</code></pre>
 
     <hr>
 
     <h2>Available Utility Methods</h2>
 
-    <pre><code>// From Message class (similar to BukkitAudience)
-protected void sendMessage(CommandSender sender, Component message)      // Chat message with hex colors
-protected void sendActionBar(Player player, Component message)           // Action bar with hex colors
-protected void sendTitle(Player player, Component title, Component subtitle, int fadeIn, int stay, int fadeOut)  // Title with hex colors
+    <pre><code>// From Message class (can access directly via adventure field)
+protected void sendMessage(CommandSender sender, Component message)
+protected void sendActionBar(Player player, Component message)
+protected void sendTitle(Player player, Component title, Component subtitle, int fadeIn, int stay, int fadeOut)
 protected void applyCommands(Player player)
 
 // From SoundableMessage class
@@ -292,7 +316,9 @@ protected void applySound(Player player)
 // Static utility
 Utils.hexComponent("&lt;red&gt;Hello") // Converts MiniMessage to Component (supports hex colors `&#XXXXXX` for older versions)</code></pre>
 
-    <p>These methods work like <code>BukkitAudience</code>, supporting hex colors (<code>&#XXXXXX</code> format) even on older Minecraft versions.</p>
+    <div class="warning">
+        <strong>Note:</strong> If your message doesn't require sound or location, extend <code>Message</code> directly. Only extend <code>SoundableMessage</code> if you want sound effects.
+    </div>
 
 </body>
 </html>

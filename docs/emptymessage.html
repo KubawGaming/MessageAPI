@@ -81,20 +81,21 @@
 
     <h2>Configuration (YAML)</h2>
 
-    <div class="note">
-        <strong>Important:</strong> <code>messageType: EMPTY </code> is required for proper deserialization.
-    </div>
+    <h3>Minimal (Does Absolutely Nothing)</h3>
+    <pre><code>do-nothing:
+  messageType: EMPTY</code></pre>
 
+    <h3>With Commands and Sound</h3>
     <pre><code>silent-reward:
   messageType: EMPTY
+  messageDelay: 20
   commands:
   - "give {PLAYER} diamond 1"
   - "effect give {PLAYER} speed 30 1"
-  messageDelay: 20
   sound:
     paths:
-    - "entity.experience_orb.pickup"
-    - "entity.player.levelup"
+    - "minecraft:entity.experience_orb.pickup"
+    - "minecraft:entity.player.levelup"
     volume: 1.0
     pitch: 1.2</code></pre>
 
@@ -113,7 +114,7 @@ message.sendTo(player);</code></pre>
 
     <h3>With Sound</h3>
     <pre><code>EmptyMessage message = new EmptyMessage();
-message.setSoundPaths(List.of("entity.firework_rocket.blast"))
+message.setSoundPaths(List.of("minecraft:entity.firework_rocket.blast"))
        .setSoundVolume(1.5f)
        .setSoundPitch(0.8f)
        .sendTo(player);</code></pre>

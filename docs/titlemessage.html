@@ -65,10 +65,44 @@
             color: #f39c12;
         }
 
+        .warning {
+            background-color: #2a2a2a;
+            border-left: 4px solid #e74c3c;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .warning strong {
+            color: #e74c3c;
+        }
+
         hr {
             border: none;
             border-top: 1px solid #333;
             margin: 40px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+
+        th {
+            background-color: #2a2a2a;
+            color: #3498db;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background-color: #2a2a2a;
         }
     </style>
 </head>
@@ -83,6 +117,7 @@
 
     <h3>Full Example</h3>
     <pre><code>welcome-title:
+  messageType: TITLE
   title: "&lt;gold&gt;&lt;bold&gt;WELCOME"
   subtitle: "&lt;gray&gt;to our server, {PLAYER}!"
   fadeIn: 10
@@ -93,32 +128,82 @@
   messageDelay: 40
   sound:
     paths:
-    - "ui.toast.challenge_complete"
-    - "entity.player.levelup"
+    - "minecraft:ui.toast.challenge_complete"
+    - "minecraft:entity.player.levelup"
     delay: 10
     volume: 1.0
     pitch: 1.2</code></pre>
 
-    <div class="note">
-        <strong>Note:</strong> Both <code>title</code> and <code>subtitle</code> are optional. You can omit either field, and it will be treated as empty.
+    <h3>Minimal Example (Uses Default Values)</h3>
+    <pre><code>simple-title:
+  messageType: TITLE
+  title: "&lt;red&gt;&lt;bold&gt;WARNING!"</code></pre>
+
+    <div class="warning">
+        <strong>Important:</strong> All timing values are in <strong>milliseconds</strong>, not ticks! (1000ms = 1 second)
     </div>
 
-    <h3>Minimal Example (Title Only)</h3>
-    <pre><code>simple-title:
-  title: "&lt;red&gt;&lt;bold&gt;WARNING!"
-  fadeIn: 10
-  stay: 40
-  fadeOut: 10</code></pre>
+    <hr>
+
+    <h2>Property Reference</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>Type</th>
+                <th>Default</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>title</code></td>
+                <td>String</td>
+                <td>-</td>
+                <td>Main title text (optional, supports MiniMessage)</td>
+            </tr>
+            <tr>
+                <td><code>subtitle</code></td>
+                <td>String</td>
+                <td>-</td>
+                <td>Subtitle text (optional, supports MiniMessage)</td>
+            </tr>
+            <tr>
+                <td><code>fadeIn</code></td>
+                <td>Integer</td>
+                <td>0</td>
+                <td>Fade-in time in milliseconds</td>
+            </tr>
+            <tr>
+                <td><code>stay</code></td>
+                <td>Integer</td>
+                <td>1000</td>
+                <td>Display time in milliseconds</td>
+            </tr>
+            <tr>
+                <td><code>fadeOut</code></td>
+                <td>Integer</td>
+                <td>0</td>
+                <td>Fade-out time in milliseconds</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="note">
+        <strong>Note:</strong> Both <code>title</code> and <code>subtitle</code> are optional. You can omit either field, and it will be treated as empty. All fade/stay fields are also optional - they will use the default values shown above if not specified.
+    </div>
 
     <hr>
 
     <h2>Developer Usage</h2>
 
-    <h3>Basic Usage</h3>
-    <pre><code>TitleMessage message = new TitleMessage("&lt;gold&gt;&lt;bold&gt;WELCOME", "&lt;gray&gt;Enjoy your stay!", 10, 60, 20);
+    <h3>Basic Usage (Using Defaults)</h3>
+    <pre><code>// All timing parameters use defaults (fadeIn=0, stay=1000, fadeOut=0)
+TitleMessage message = new TitleMessage("&lt;gold&gt;&lt;bold&gt;WELCOME", "&lt;gray&gt;Enjoy your stay!", null, null, null);
 message.sendTo(player);</code></pre>
 
-    <h3>With Placeholders</h3>
+    <h3>Custom Timing</h3>
     <pre><code>TitleMessage message = new TitleMessage(
     "&lt;aqua&gt;Player Stats",
     "&lt;gray&gt;Level: {LEVEL} | Kills: {KILLS}",
@@ -130,6 +215,12 @@ message.replace("{LEVEL}", player.getLevel())
 
     <h3>Title Only (No Subtitle)</h3>
     <pre><code>TitleMessage message = new TitleMessage("&lt;red&gt;&lt;bold&gt;WARNING!", null, 10, 40, 10);
+message.sendTo(player);</code></pre>
+
+    <h3>Using Setters with Null Values (Uses Defaults)</h3>
+    <pre><code>TitleMessage message = new TitleMessage("&lt;green&gt;Welcome!", null, null, null, null);
+// Or create via setters
+message.setTitle("&lt;green&gt;Welcome!");
 message.sendTo(player);</code></pre>
 
 </body>

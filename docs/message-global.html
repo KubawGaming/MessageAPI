@@ -110,7 +110,25 @@
 <body>
     <h1>Message (Global)</h1>
 
-    <p>This section covers common features shared across all default message types in MessageAPI. These properties and methods are available for every built-in message implementation.</p>
+    <p>This section covers common features shared across all message types in MessageAPI. These properties and methods are available for every built-in message implementation.</p>
+
+    <hr>
+
+    <h2>Message Type</h2>
+
+    <p>Every message in YAML configuration requires a <code>messageType</code> field for proper deserialization.</p>
+
+    <h3>Available Message Types</h3>
+    <ul>
+        <li><code>CHAT</code> - Standard chat message</li>
+        <li><code>CHAT_LIST</code> - Multiple chat messages</li>
+        <li><code>ACTIONBAR</code> - Action bar message</li>
+        <li><code>ANIMATED_ACTIONBAR</code> - Animated action bar</li>
+        <li><code>TITLE</code> - Title message</li>
+        <li><code>ANIMATED_TITLE</code> - Animated title</li>
+        <li><code>MULTI</code> - Multiple messages combined</li>
+        <li><code>EMPTY</code> - Empty message (sound/commands only)</li>
+    </ul>
 
     <hr>
 
@@ -120,6 +138,7 @@
 
     <h3>Configuration (YAML)</h3>
     <pre><code>welcome-message:
+  messageType: CHAT
   message: "&lt;green&gt;Welcome to the server!"
   messageDelay: 40  # 2 seconds delay</code></pre>
 
@@ -141,6 +160,7 @@ message.setMessageDelay(40).sendTo(player);</code></pre>
 
     <h3>Configuration (YAML)</h3>
     <pre><code>reward-message:
+  messageType: CHAT
   message: "&lt;gold&gt;Reward claimed!"
   commands:
   - "give {PLAYER} diamond 1"
@@ -169,26 +189,30 @@ message.sendTo(player);</code></pre>
 
     <h4>Basic Sound</h4>
     <pre><code>level-up-message:
+  messageType: CHAT
   message: "&lt;green&gt;Level Up!"
   sound:
     paths:
-    - "entity.player.levelup"</code></pre>
+    - "minecraft:entity.player.levelup"</code></pre>
 
     <h4>Multiple Sounds (Random Selection)</h4>
     <pre><code>notification-message:
+  messageType: ACTIONBAR
   message: "&lt;yellow&gt;Notification!"
   sound:
     paths:
-    - "block.note_block.pling"
-    - "block.note_block.chime"
-    - "block.note_block.bell"</code></pre>
+    - "minecraft:block.note_block.pling"
+    - "minecraft:block.note_block.chime"
+    - "minecraft:block.note_block.bell"</code></pre>
 
     <h4>Advanced Configuration</h4>
     <pre><code>custom-message:
-  message: "&lt;gold&gt;Custom Sound!"
+  messageType: TITLE
+  title: "&lt;gold&gt;Custom Sound!"
+  stay: 1000
   sound:
     paths:
-    - "entity.player.levelup"
+    - "minecraft:entity.player.levelup"
     delay: 10      # Ticks before playing sound (default: 0)
     volume: 1.0    # Sound volume (default: 1.0)
     pitch: 1.0     # Sound pitch (default: 1.0)</code></pre>
@@ -236,16 +260,16 @@ message.sendTo(player);</code></pre>
     <h4>Basic Sound</h4>
     <pre><code>SoundableMessage message = new ChatMessage("&lt;green&gt;Level Up!");
 
-message.setSoundPaths(List.of("entity.player.levelup"))
+message.setSoundPaths(List.of("minecraft:entity.player.levelup"))
         .sendTo(player);</code></pre>
 
     <h4>Multiple Sounds with Configuration</h4>
-    <pre><code>SoundableMessage message = new ChatMessage("<yellow>Notification!");
+    <pre><code>SoundableMessage message = new ActionBarMessage("&lt;yellow&gt;Notification!");
 
 message.setSoundPaths(List.of(
-                "block.note_block.pling",
-                "block.note_block.chime",
-                "block.note_block.bell"))
+                "minecraft:block.note_block.pling",
+                "minecraft:block.note_block.chime",
+                "minecraft:block.note_block.bell"))
         .setSoundVolume(0.8f)
         .setSoundPitch(1.5f)
         .setSoundDelay(10)
