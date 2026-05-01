@@ -52,7 +52,7 @@ import java.util.function.Predicate;
 public abstract class Message implements Cloneable {
 
     protected static JavaPlugin plugin;
-    private static BukkitAudiences adventure;
+    protected static BukkitAudiences adventure;
 
     @Setter @Getter private static ObjectMapper objectMapper;
     private static final Set<Class<?>> registeredMessageTypes = ConcurrentHashMap.newKeySet();
