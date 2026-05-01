@@ -3,6 +3,7 @@ package me.kubaw208.messageapi.structs.messages;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -19,20 +20,19 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@JsonPropertyOrder({
-        "defaultTime"
-})
+@JsonTypeName("ANIMATED_ACTIONBAR")
+@JsonPropertyOrder({"defaultTime"})
 @Getter
 @Accessors(chain = true)
 public class AnimatedActionBarMessage extends SoundableMessage {
 
     @Getter private static final HashMap<Player, BetterRunnable> animatedActionBarTasks = new HashMap<>();
 
-    @JsonProperty("animatedActionBar") private ArrayList<ActionBarAnimationData> frames;
-    @Setter private Integer defaultTime = null;
+    @JsonProperty("frames") private ArrayList<ActionBarAnimationData> frames;
+    @Setter @JsonProperty("defaultTime") private Integer defaultTime = null;
 
     @JsonCreator
-    public AnimatedActionBarMessage(@NotNull @JsonProperty("animatedActionBar") List<ActionBarAnimationData> frames) {
+    public AnimatedActionBarMessage(@NotNull @JsonProperty("frames") List<ActionBarAnimationData> frames) {
         this.frames = new ArrayList<>(frames);
     }
 

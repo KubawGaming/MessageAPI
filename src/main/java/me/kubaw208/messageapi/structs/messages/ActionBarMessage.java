@@ -2,6 +2,7 @@ package me.kubaw208.messageapi.structs.messages;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.Getter;
 import lombok.Setter;
 import me.kubaw208.messageapi.structs.SoundableMessage;
@@ -9,12 +10,15 @@ import me.kubaw208.messageapi.utils.Utils;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+@JsonTypeName("ACTIONBAR")
+@Getter
+@Setter
 public class ActionBarMessage extends SoundableMessage {
 
-    @JsonProperty("actionbar") @Getter @Setter private String message;
+    @JsonProperty("message") private String message;
 
     @JsonCreator
-    public ActionBarMessage(@NotNull @JsonProperty("actionbar") String message) {
+    public ActionBarMessage(@NotNull @JsonProperty("message") String message) {
         this.message = message;
     }
 

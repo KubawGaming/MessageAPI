@@ -2,6 +2,7 @@ package me.kubaw208.messageapi.structs.messages;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.Getter;
 import me.kubaw208.messageapi.structs.SoundableMessage;
 import me.kubaw208.messageapi.utils.Utils;
@@ -13,12 +14,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+@JsonTypeName("CHAT_LIST")
+@Getter
 public class ChatListMessage extends SoundableMessage {
 
-    @JsonProperty("list") @Getter private ArrayList<String> messages;
+    @JsonProperty("message") private ArrayList<String> messages;
 
     @JsonCreator
-    public ChatListMessage(@NotNull @JsonProperty("list") List<String> messages) {
+    public ChatListMessage(@NotNull @JsonProperty("message") List<String> messages) {
         this.messages = new ArrayList<>(messages);
     }
 

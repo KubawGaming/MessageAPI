@@ -3,6 +3,7 @@ package me.kubaw208.messageapi.structs.messages;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -18,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@JsonTypeName("ANIMATED_TITLE")
 @JsonPropertyOrder({
         "defaultTime",
         "defaultFadeIn",
@@ -30,14 +32,14 @@ public class AnimatedTitleMessage extends SoundableMessage {
 
     @Getter private static final HashMap<Player, BetterRunnable> animatedTitleTasks = new HashMap<>();
 
-    @JsonProperty("animatedTitle") private ArrayList<TitleAnimationData> frames;
-    @Setter private Integer defaultTime = null;
-    @Setter private Integer defaultFadeIn = null;
-    @Setter private Integer defaultStay = null;
-    @Setter private Integer defaultFadeOut = null;
+    @JsonProperty("frames") private ArrayList<TitleAnimationData> frames;
+    @Setter @JsonProperty("defaultTime") private Integer defaultTime = null;
+    @Setter @JsonProperty("defaultFadeIn") private Integer defaultFadeIn = null;
+    @Setter @JsonProperty("defaultStay") private Integer defaultStay = null;
+    @Setter @JsonProperty("defaultFadeOut") private Integer defaultFadeOut = null;
 
     @JsonCreator
-    public AnimatedTitleMessage(@NotNull @JsonProperty("animatedTitle") List<TitleAnimationData> frames) {
+    public AnimatedTitleMessage(@NotNull @JsonProperty("frames") List<TitleAnimationData> frames) {
         this.frames = new ArrayList<>(frames);
     }
 

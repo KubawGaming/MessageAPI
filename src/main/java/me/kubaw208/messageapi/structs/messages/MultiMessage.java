@@ -2,6 +2,7 @@ package me.kubaw208.messageapi.structs.messages;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.Getter;
 import me.kubaw208.messageapi.structs.Message;
 import me.kubaw208.messageapi.structs.SoundableMessage;
@@ -11,9 +12,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+@JsonTypeName("MULTI")
+@Getter
 public class MultiMessage extends SoundableMessage {
 
-    @Getter private ArrayList<Message> messages;
+    @JsonProperty("messages") private ArrayList<Message> messages;
 
     @JsonCreator
     public MultiMessage(@NotNull @JsonProperty("messages") List<Message> messages) {

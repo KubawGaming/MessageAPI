@@ -2,6 +2,7 @@ package me.kubaw208.messageapi.structs.messages;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.Getter;
 import lombok.Setter;
 import me.kubaw208.messageapi.structs.SoundableMessage;
@@ -9,13 +10,16 @@ import me.kubaw208.messageapi.utils.Utils;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+@JsonTypeName("TITLE")
+@Getter
+@Setter
 public class TitleMessage extends SoundableMessage {
 
-    @Getter @Setter private String title;
-    @Getter @Setter private String subtitle;
-    @Getter @Setter private int fadeIn;
-    @Getter @Setter private int stay;
-    @Getter @Setter private int fadeOut;
+    @JsonProperty("title") private String title;
+    @JsonProperty("subtitle") private String subtitle;
+    @JsonProperty("fadeIn") private int fadeIn;
+    @JsonProperty("stay") private int stay;
+    @JsonProperty("fadeOut") private int fadeOut;
 
     @JsonCreator
     public TitleMessage(

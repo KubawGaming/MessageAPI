@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Message Types - MessageAPI</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #e0e0e0;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background-color: #1a1a1a;
+        }
+
+        h1 {
+            color: #3498db;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #3498db;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            color: #5dade2;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        pre {
+            background-color: #2a2a2a;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            overflow-x: auto;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        code {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            color: #aaa;
+        }
+
+        .note {
+            background-color: #2a2a2a;
+            border-left: 4px solid #2ecc71;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .note strong {
+            color: #2ecc71;
+        }
+
+        .warning {
+            background-color: #2a2a2a;
+            border-left: 4px solid #e74c3c;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .warning strong {
+            color: #e74c3c;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #333;
+            margin: 40px 0;
+        }
+
+        ul {
+            margin-left: 20px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Custom Message Types</h1>
+
+    <p>Create your own message types by extending the base classes provided by MessageAPI.</p>
+
+    <hr>
+
+    <h2>Class Hierarchy</h2>
+
+    <pre><code>Message (abstract)
+├── LocalizedMessage (abstract)
+│   └── SoundableMessage (abstract)
+│       ├── ChatMessage
+│       ├── ChatListMessage
+│       ├── ActionBarMessage
+│       ├── AnimatedActionBarMessage
+│       ├── TitleMessage
+│       ├── AnimatedTitleMessage
+│       ├── MultiMessage
+│       └── EmptyMessage
+└── (your custom messages)</code></pre>
+
+    <hr>
+
+    <h2>Base Classes Overview</h2>
+
+    <h3>Message</h3>
+    <p>The root abstract class. Provides:</p>
+    <ul>
+        <li><code>messageDelay</code> - Delay before sending (in ticks)</li>
+        <li><code>commands</code> - List of console commands to execute (supports {PLAYER} placeholder)</li>
+        <li><code>sendTo*()</code> - Built-in delivery methods (broadcast, permission filters, radius, predicates)</li>
+        <li><code>replace()</code> - Placeholder replacement system</li>
+        <li><code>clone()</code> - Immutable operations support</li>
+        <li>Utility methods: <code>sendMessage()</code>, <code>sendActionBar()</code>, <code>sendTitle()</code>, <code>applyCommands()</code></li>
+    </ul>
+
+    <h3>LocalizedMessage</h3>
+    <p>Extends Message. Adds support for location-based messages.</p>
+
+    <h3>SoundableMessage</h3>
+    <p>Extends LocalizedMessage. Adds sound effects support:</p>
+    <ul>
+        <li><code>soundSettings</code> - Paths, delay, volume, pitch</li>
+        <li><code>applySound()</code> - Plays sound to recipient</li>
+        <li><code>inLocation()</code> - Sets sound playback location</li>
+    </ul>
+
+    <hr>
+
+    <h2>Creating a Custom Message</h2>
+
+    <h3>1. Minimal Implementation (No Sound, No Location)</h3>
+    <pre><code>package myplugin.messages;
+
+import me.kubaw208.messageapi.structs.Message;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+
+public class BossBarMessage extends Message {
+
+    private String text;
+    private float progress;
+
+    public BossBarMessage(String text, float progress) {
+        this.text = text;
+        this.progress = progress;
+    }
+
+    @Override
+    protected Message sendToInternal(@NotNull Player player) {
+        applyCommands(player);
+        // Your custom delivery logic here
+        player.getBossBar(...); // Example
+        return this;
+    }
+
+    @Override
+    public Message replace(@NotNull String toReplace, @NotNull String replaced) {
+        BossBarMessage cloned = this.clone();
+        cloned.text = cloned.text.replace(toReplace, replaced);
+        return cloned;
+    }
+
+    @Override
+    public BossBarMessage clone() {
+        return (BossBarMessage) super.clone();
+    }
+}</code></pre>
+
+    <h3>2. With Sound Support</h3>
+    <pre><code>// Change extends from Message to SoundableMessage
+public class BossBarMessage extends SoundableMessage {
+    // Rest of the code remains the same
+}</code></pre>
+
+    <h3>3. Full Example with JSON Support</h3>
+    <pre><code>package myplugin.messages;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.Setter;
+import me.kubaw208.messageapi.structs.SoundableMessage;
+import me.kubaw208.messageapi.utils.Utils;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+
+@Getter
+@Setter
+public class BossBarMessage extends SoundableMessage {
+
+    @JsonProperty("text")
+    private String text;
+
+    @JsonProperty("progress")
+    private float progress;
+
+    @JsonCreator
+    public BossBarMessage(
+        @JsonProperty("text") String text,
+        @JsonProperty("progress") float progress
+    ) {
+        this.text = text;
+        this.progress = progress;
+    }
+
+    @Override
+    protected BossBarMessage sendToInternal(@NotNull Player player) {
+        applySound(player);
+        applyCommands(player);
+        // Your custom logic
+        return this;
+    }
+
+    @Override
+    public BossBarMessage replace(@NotNull String toReplace, @NotNull String replaced) {
+        BossBarMessage cloned = this.clone();
+        cloned.text = cloned.text.replace(toReplace, replaced);
+        return cloned;
+    }
+
+    @Override
+    public BossBarMessage clone() {
+        return (BossBarMessage) super.clone();
+    }
+}</code></pre>
+
+    <hr>
+
+    <h2>JSON Serialization with Jackson</h2>
+
+    <p>MessageAPI uses <a href="https://github.com/FasterXML/jackson" style="color: #3498db;">Jackson</a> for YAML/JSON serialization and deserialization. The <code>@JsonProperty</code> annotations define which fields are serialized. <code>@JsonCreator</code> tells Jackson how to reconstruct your message from data.</p>
+
+    <div class="note">
+        <strong>Why Jackson?</strong> It allows MessageAPI to automatically save/load your custom message configurations to YAML files, and enables polymorphic deserialization (knowing which message type to create based on the data structure).
+    </div>
+
+    <hr>
+
+    <h2>Registering Custom Type for JSON</h2>
+
+    <div class="note">
+        <strong>Important:</strong> Register your custom message type after calling <code>Message.init()</code> to enable JSON deserialization.
+    </div>
+
+    <pre><code>// During plugin startup
+Message.init(this);
+Message.registerMessageType(BossBarMessage.class);
+
+// Your custom type is now ready for YAML/JSON</code></pre>
+
+    <pre><code># config.yml
+my-bossbar:
+  text: "&lt;red&gt;Boss Health: {HEALTH}"
+  progress: 0.75
+  commands:
+  - "say Boss damaged!"
+  sound:
+    paths:
+    - "minecraft:entity.ender_dragon.growl"
+    volume: 1.0</code></pre>
+
+    <div class="warning">
+        <strong>Note:</strong> If your message doesn't require sound or location, extend <code>Message</code> directly. Only extend <code>SoundableMessage</code> if you want sound effects.
+    </div>
+
+    <hr>
+
+    <h2>Available Utility Methods</h2>
+
+    <pre><code>// From Message class (similar to BukkitAudience)
+protected void sendMessage(CommandSender sender, Component message)      // Chat message with hex colors
+protected void sendActionBar(Player player, Component message)           // Action bar with hex colors
+protected void sendTitle(Player player, Component title, Component subtitle, int fadeIn, int stay, int fadeOut)  // Title with hex colors
+protected void applyCommands(Player player)
+
+// From SoundableMessage class
+protected void applySound(Player player)
+
+// Static utility
+Utils.hexComponent("&lt;red&gt;Hello") // Converts MiniMessage to Component (supports hex colors `&#XXXXXX` for older versions)</code></pre>
+
+    <p>These methods work like <code>BukkitAudience</code>, supporting hex colors (<code>&#XXXXXX</code> format) even on older Minecraft versions.</p>
+
+</body>
+</html>

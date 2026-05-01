@@ -2,6 +2,7 @@ package me.kubaw208.messageapi.structs.messages;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.Getter;
 import lombok.Setter;
 import me.kubaw208.messageapi.structs.SoundableMessage;
@@ -11,9 +12,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+@JsonTypeName("CHAT")
+@Getter
+@Setter
 public class ChatMessage extends SoundableMessage {
 
-    @Getter @Setter private String message;
+    @JsonProperty("message") private String message;
 
     @JsonCreator
     public ChatMessage(@NotNull @JsonProperty("message") String message) {
