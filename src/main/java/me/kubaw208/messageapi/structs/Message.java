@@ -58,7 +58,7 @@ public abstract class Message implements Cloneable {
     private static final Set<Class<?>> registeredMessageTypes = ConcurrentHashMap.newKeySet();
 
     @JsonProperty("messageDelay") @Setter @Accessors(chain = true) private Integer messageDelay = null;
-    @Setter @Accessors(chain = true) protected List<String> commands = new ArrayList<>();
+    @JsonProperty("commands") @Setter @Accessors(chain = true) protected List<String> commands = new ArrayList<>();
 
     /**
      * Initializes the message system with the given plugin instance and registers default message types.
