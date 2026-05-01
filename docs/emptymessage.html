@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EmptyMessage - MessageAPI</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #e0e0e0;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background-color: #1a1a1a;
+        }
+
+        h1 {
+            color: #3498db;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #3498db;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            color: #5dade2;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        pre {
+            background-color: #2a2a2a;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            overflow-x: auto;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        code {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            color: #aaa;
+        }
+
+        .note {
+            background-color: #2a2a2a;
+            border-left: 4px solid #f39c12;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .note strong {
+            color: #f39c12;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #333;
+            margin: 40px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>EmptyMessage</h1>
+
+    <p>A message that displays nothing to the player. Useful for executing commands or playing sounds without any visual output.</p>
+
+    <hr>
+
+    <h2>Configuration (YAML)</h2>
+
+    <div class="note">
+        <strong>Important:</strong> <code>messageType: EMPTY </code> is required for proper deserialization.
+    </div>
+
+    <pre><code>silent-reward:
+  messageType: EMPTY
+  commands:
+  - "give {PLAYER} diamond 1"
+  - "effect give {PLAYER} speed 30 1"
+  messageDelay: 20
+  sound:
+    paths:
+    - "entity.experience_orb.pickup"
+    - "entity.player.levelup"
+    volume: 1.0
+    pitch: 1.2</code></pre>
+
+    <hr>
+
+    <h2>Developer Usage</h2>
+
+    <h3>Basic Usage</h3>
+    <pre><code>EmptyMessage message = new EmptyMessage();
+message.sendTo(player);</code></pre>
+
+    <h3>With Commands</h3>
+    <pre><code>EmptyMessage message = new EmptyMessage();
+message.setCommands(List.of("give {PLAYER} diamond 1", "eco give {PLAYER} 100"));
+message.sendTo(player);</code></pre>
+
+    <h3>With Sound</h3>
+    <pre><code>EmptyMessage message = new EmptyMessage();
+message.setSoundPaths(List.of("entity.firework_rocket.blast"))
+       .setSoundVolume(1.5f)
+       .setSoundPitch(0.8f)
+       .sendTo(player);</code></pre>
+
+    <hr>
+
+    <h2>Example Use Cases</h2>
+
+    <ul style="margin-left: 20px; margin-bottom: 20px;">
+        <li>Silent command execution (e.g., giving items without notification)</li>
+        <li>Playing sounds without visual feedback</li>
+        <li>Conditional actions based on message delays</li>
+        <li>Placeholder for messages that should be disabled</li>
+    </ul>
+
+</body>
+</html>

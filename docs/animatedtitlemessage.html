@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AnimatedTitleMessage - MessageAPI</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #e0e0e0;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background-color: #1a1a1a;
+        }
+
+        h1 {
+            color: #3498db;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #3498db;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            color: #5dade2;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        pre {
+            background-color: #2a2a2a;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            overflow-x: auto;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        code {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            color: #aaa;
+        }
+
+        .note {
+            background-color: #2a2a2a;
+            border-left: 4px solid #e67e22;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .note strong {
+            color: #e67e22;
+        }
+
+        .warning {
+            background-color: #2a2a2a;
+            border-left: 4px solid #e74c3c;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .warning strong {
+            color: #e74c3c;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #333;
+            margin: 40px 0;
+        }
+
+        ul {
+            margin-left: 20px;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #333;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #2a2a2a;
+            color: #3498db;
+        }
+    </style>
+</head>
+<body>
+    <h1>AnimatedTitleMessage</h1>
+
+    <p>Displays a sequence of titles as an animation. Each frame can have its own timing and display settings.</p>
+
+    <hr>
+
+    <h2>Configuration (YAML)</h2>
+
+    <h3>Basic Animation with defaultTime</h3>
+    <pre><code>animatedTitleMessage:
+  defaultTime: 40
+  defaultFadeIn: 10
+  defaultStay: 60
+  defaultFadeOut: 10
+  animatedTitle:
+  - title: "&lt;red&gt;&lt;bold&gt;ROUND 1"
+    subtitle: "&lt;gray&gt;Get ready!"
+  - title: "&lt:yellow&gt;&lt;bold&gt;FIGHT!"
+    subtitle: "&lt;red&gt;GO GO GO!"
+  commands:
+  - "give {PLAYER} diamond 1"
+  sound:
+    paths:
+    - "minecraft:entity.player.levelup"
+    delay: 10
+    volume: 1.0
+    pitch: 1.0</code></pre>
+
+    <h3>Individual Frame Settings (Override Defaults)</h3>
+    <pre><code>animatedTitleMessage:
+  defaultTime: 30
+  defaultFadeIn: 5
+  defaultStay: 40
+  defaultFadeOut: 5
+  animatedTitle:
+  - title: "&lt;gold&gt;LEVEL 1"
+    subtitle: "&lt;gray&gt;Easy"
+    time: 60
+    stay: 80
+  - title: "&lt:yellow&gt;LEVEL 2"
+    subtitle: "&lt;gray&gt;Medium"
+  - title: "&lt;red&gt;&lt;bold&gt;LEVEL 3"
+    subtitle: "&lt;dark_red&gt;HARD"
+    fadeIn: 20
+    stay: 100
+    fadeOut: 20</code></pre>
+
+    <div class="note">
+        <strong>Default Values:</strong> The following defaults can be set at the root level and apply to all frames unless overridden:
+        <ul style="margin-top: 10px;">
+            <li><code>defaultTime</code> - Duration of each frame in ticks (default: 1 tick)</li>
+            <li><code>defaultFadeIn</code> - Title fade-in time in milliseconds (default: 0)</li>
+            <li><code>defaultStay</code> - Title display time in milliseconds (default: 60)</li>
+            <li><code>defaultFadeOut</code> - Title fade-out time in milliseconds (default: 0)</li>
+        </ul>
+    </div>
+
+    <hr>
+
+    <h2>How Frames Work</h2>
+
+    <p>Each frame is an object with the following properties:</p>
+
+    <table>
+        <thead>
+            <tr><th>Property</th><th>Type</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+            <tr><td><code>title</code></td><td>String</td><td>Main title text (optional, supports MiniMessage)</td></tr>
+            <tr><td><code>subtitle</code></td><td>String</td><td>Subtitle text (optional, supports MiniMessage)</td></tr>
+            <tr><td><code>fadeIn</code></td><td>Integer</td><td>Fade-in time in milliseconds (overrides <code>defaultFadeIn</code>)</td></tr>
+            <tr><td><code>stay</code></td><td>Integer</td><td>Display time in milliseconds (overrides <code>defaultStay</code>)</td></tr>
+            <tr><td><code>fadeOut</code></td><td>Integer</td><td>Fade-out time in milliseconds (overrides <code>defaultFadeOut</code>)</td></tr>
+            <tr><td><code>time</code></td><td>Integer</td><td>Duration of this frame in ticks (overrides <code>defaultTime</code>)</td></tr>
+        </tbody>
+    </table>
+
+    <p>Frames play sequentially from first to last. After the final frame, the animation stops automatically.</p>
+
+    <div class="warning">
+        <strong>Note:</strong> Unlike animated action bars, titles don't require keep-alive logic. Each title appears with its configured fadeIn/stay/fadeOut timing, then waits for the next frame.
+    </div>
+
+    <hr>
+
+    <h2>Developer Usage</h2>
+
+    <h3>Basic Animation with Frames</h3>
+    <pre><code>List&lt;TitleAnimationData&gt; frames = List.of(
+    new TitleAnimationData("&lt;gold&gt;Round 1", "&lt;gray&gt;Get ready", 10, 60, 10, 40),
+    new TitleAnimationData("&lt;yellow&gt;Round 2", "&lt;gray&gt;Faster!", null, null, null, 40),
+    new TitleAnimationData("&lt;red&gt;Final Round", "&lt;dark_red&gt;BOSS!", 20, 80, 20, 60)
+);
+
+AnimatedTitleMessage animation = new AnimatedTitleMessage(frames);
+animation.setDefaultFadeIn(5)
+         .setDefaultStay(40)
+         .setDefaultFadeOut(5)
+         .setDefaultTime(30)
+         .sendTo(player);</code></pre>
+
+    <h3>Storytelling / Cutscene Titles</h3>
+    <pre><code>List&lt;TitleAnimationData&gt; story = List.of(
+    new TitleAnimationData("", "&lt;gray&gt;A long time ago...", 20, 60, 20, 60),
+    new TitleAnimationData("&lt;gold&gt;The Hero Rises", "&lt;yellow&gt;Legendary Sword obtained", 30, 80, 30, 80),
+    new TitleAnimationData("&lt;green&gt;Quest Complete", "&lt;gray&gt;+5000 XP", 10, 100, 20, 50)
+);
+
+new AnimatedTitleMessage(story)
+    .setSoundPaths(List.of("minecraft:ui.toast.challenge_complete"))
+    .broadcast();</code></pre>
+
+    <h3>Countdown with Subtitles</h3>
+    <pre><code>List&lt;TitleAnimationData&gt; frames = new ArrayList<>();
+
+for(int i = 5; i > 0; i--) {
+    frames.add(new TitleAnimationData(
+        "&lt;red&gt;" + i,
+        "&lt;gray&gt;Get ready to teleport",
+        10, 20, 10, 20
+    ));
+}
+frames.add(new TitleAnimationData(
+    "&lt;green&gt;GO!",
+    "&lt;yellow&gt;Teleporting now",
+    10, 40, 10, 30
+));
+
+AnimatedTitleMessage countdown = new AnimatedTitleMessage(frames);
+countdown.setCommands(List.of("spawn {PLAYER}"))
+         .sendTo(player);</code></pre>
+
+    <h3>With Placeholders</h3>
+    <pre><code>List&lt;TitleAnimationData&gt; frames = List.of(
+    new TitleAnimationData("&lt;aqua&gt;Welcome, {NAME}!", "&lt;gray&gt;Level {LEVEL}", 10, 60, 10, 40),
+    new TitleAnimationData("&lt;green&gt;Enjoy your stay!", null, 10, 40, 10, 30)
+);
+
+AnimatedTitleMessage animation = new AnimatedTitleMessage(frames);
+animation.replace("{NAME}", player.getName())
+         .replace("{LEVEL}", player.getLevel())
+         .broadcast();</code></pre>
+
+    <h3>Preventing Multiple Animations</h3>
+    <p>The system automatically stops any existing title animation for a player before starting a new one. No manual cleanup required.</p>
+
+</body>
+</html>
