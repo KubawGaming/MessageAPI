@@ -140,6 +140,22 @@
 
     <hr>
 
+    <h2>JSON Serialization with Jackson</h2>
+
+    <p>MessageAPI uses <a href="https://github.com/FasterXML/jackson" target="_blank" style="color: #3498db;">Jackson</a> for YAML/JSON serialization and deserialization. The <code>@JsonProperty</code> annotations define which fields are serialized. <code>@JsonCreator</code> tells Jackson how to reconstruct your message from data.</p>
+
+    <div class="note">
+        <strong>Why Jackson?</strong> It allows MessageAPI to automatically save/load your custom message configurations to YAML files, and enables polymorphic deserialization (knowing which message type to create based on the data structure).
+    </div>
+
+    <div class="warning">
+        <strong>Creating Custom Types Requires Jackson:</strong> When creating your own message types, you must use Jackson annotations (<code>@JsonProperty</code>, <code>@JsonCreator</code>, <code>@JsonTypeName</code>) to properly define which fields should be serialized/deserialized. This allows MessageAPI's <code>MessageSerializer</code> to correctly save and load your custom messages from YAML configuration files.
+        <br><br>
+        For more information, see the <a href="https://github.com/FasterXML/jackson-core" target="_blank" style="color: #3498db;">Jackson Core documentation</a>.
+    </div>
+
+    <hr>
+
     <h2>Creating a Custom Message - BossBar Example</h2>
 
     <h3>Complete Implementation</h3>
@@ -308,17 +324,13 @@ bossBar.setCommands(List.of("effect give {PLAYER} strength 10 1"))
 protected void sendMessage(CommandSender sender, Component message)
 protected void sendActionBar(Player player, Component message)
 protected void sendTitle(Player player, Component title, Component subtitle, int fadeIn, int stay, int fadeOut)
+
+// Method you need to use when message is received by player if you want to keep commands support
 protected void applyCommands(Player player)
 
 // From SoundableMessage class
 protected void applySound(Player player)
-
-// Static utility
-Utils.hexComponent("&lt;red&gt;Hello") // Converts MiniMessage to Component (supports hex colors `&#XXXXXX` for older versions)</code></pre>
-
-    <div class="warning">
-        <strong>Note:</strong> If your message doesn't require sound or location, extend <code>Message</code> directly. Only extend <code>SoundableMessage</code> if you want sound effects.
-    </div>
+</code></pre>
 
 </body>
 </html>
