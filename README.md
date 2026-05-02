@@ -1,6 +1,6 @@
 # MessageAPI
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/KubawGaming/MessageAPI/releases)
+[![Version](https://jitpack.io/v/KubawGaming/MessageAPI.svg)](https://jitpack.io/#KubawGaming/MessageAPI)
 [![Java](https://img.shields.io/badge/Java-17+-orange.svg)](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
 [![Paper](https://img.shields.io/badge/Paper-1.17+-green.svg)](https://papermc.io/)
 
