@@ -11,6 +11,7 @@ import me.kubaw208.betterrunnableapi.BetterRunnable;
 import me.kubaw208.messageapi.structs.SoundableMessage;
 import me.kubaw208.messageapi.structs.TitleAnimationData;
 import me.kubaw208.messageapi.utils.Utils;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,7 +31,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Accessors(chain = true)
 public class AnimatedTitleMessage extends SoundableMessage {
 
-    @Getter private static final HashMap<Player, BetterRunnable> animatedTitleTasks = new HashMap<>();
+    @Getter private static final HashMap<CommandSender, BetterRunnable> animatedTitleTasks = new HashMap<>();
 
     @JsonProperty("frames") private ArrayList<TitleAnimationData> frames;
     @Setter @JsonProperty("defaultTime") private Integer defaultTime = null;
@@ -44,9 +45,9 @@ public class AnimatedTitleMessage extends SoundableMessage {
     }
 
     @Override
-    public AnimatedTitleMessage sendToInternal(@NotNull Player player) {
-        applySound(player);
-        applyCommands(player);
+    public AnimatedTitleMessage sendToInternal(@NotNull CommandSender receiver) {
+        applySound(receiver);
+        applyCommands(receiver);
 
         if(frames.isEmpty()) return this;
 
@@ -54,13 +55,13 @@ public class AnimatedTitleMessage extends SoundableMessage {
         AtomicInteger currentFrame = new AtomicInteger(0);
         AtomicInteger allFramesTime = new AtomicInteger(0);
 
-        if(animatedTitleTasks.containsKey(player)) // prevent multiple animations for one player
-            animatedTitleTasks.get(player).stop();
+        if(animatedTitleTasks.containsKey(receiver)) // prevent multiple animations for one player
+            animatedTitleTasks.get(receiver).stop();
 
-        animatedTitleTasks.put(player, new BetterRunnable(plugin, task -> {
-            if(!player.isOnline()) {
+        animatedTitleTasks.put(receiver, new BetterRunnable(plugin, task -> {
+            if(receiver instanceof Player player && !player.isOnline()) {
                 task.stop();
-                animatedTitleTasks.remove(player);
+                animatedTitleTasks.remove(receiver);
                 return;
             }
 
@@ -68,7 +69,7 @@ public class AnimatedTitleMessage extends SoundableMessage {
 
             if(frameId >= frameList.size()) {
                 task.stop();
-                animatedTitleTasks.remove(player);
+                animatedTitleTasks.remove(receiver);
                 return;
             }
 
@@ -79,7 +80,7 @@ public class AnimatedTitleMessage extends SoundableMessage {
             if(task.getExecutions() < time) return;
 
             sendTitle(
-                    player,
+                    receiver,
                     Utils.hexComponent(frame.getTitle()),
                     Utils.hexComponent(frame.getSubtitle()),
                     frame.getFadeIn() != null ? frame.getFadeIn() : (defaultFadeIn != null ? defaultFadeIn : 0),

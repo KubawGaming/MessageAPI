@@ -11,6 +11,7 @@ import me.kubaw208.betterrunnableapi.BetterRunnable;
 import me.kubaw208.messageapi.structs.ActionBarAnimationData;
 import me.kubaw208.messageapi.structs.SoundableMessage;
 import me.kubaw208.messageapi.utils.Utils;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,7 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Accessors(chain = true)
 public class AnimatedActionBarMessage extends SoundableMessage {
 
-    @Getter private static final HashMap<Player, BetterRunnable> animatedActionBarTasks = new HashMap<>();
+    @Getter private static final HashMap<CommandSender, BetterRunnable> animatedActionBarTasks = new HashMap<>();
 
     @JsonProperty("frames") private ArrayList<ActionBarAnimationData> frames;
     @Setter @JsonProperty("defaultTime") private Integer defaultTime = null;
@@ -37,9 +38,9 @@ public class AnimatedActionBarMessage extends SoundableMessage {
     }
 
     @Override
-    public AnimatedActionBarMessage sendToInternal(@NotNull Player player) {
-        applySound(player);
-        applyCommands(player);
+    public AnimatedActionBarMessage sendToInternal(@NotNull CommandSender receiver) {
+        applySound(receiver);
+        applyCommands(receiver);
 
         if(frames.isEmpty()) return this;
 
@@ -49,13 +50,13 @@ public class AnimatedActionBarMessage extends SoundableMessage {
         AtomicInteger allFramesTime = new AtomicInteger(0);
         AtomicBoolean startKeepMessageVisible = new AtomicBoolean(false);
 
-        if(animatedActionBarTasks.containsKey(player)) // prevent multiple animations for one player
-            animatedActionBarTasks.get(player).stop();
+        if(animatedActionBarTasks.containsKey(receiver)) // prevent multiple animations for one sender
+            animatedActionBarTasks.get(receiver).stop();
 
-        animatedActionBarTasks.put(player, new BetterRunnable(plugin, task -> {
-            if(!player.isOnline()) {
+        animatedActionBarTasks.put(receiver, new BetterRunnable(plugin, task -> {
+            if(receiver instanceof Player player && !player.isOnline()) {
                 task.stop();
-                animatedActionBarTasks.remove(player);
+                animatedActionBarTasks.remove(receiver);
                 return;
             }
 
@@ -63,7 +64,7 @@ public class AnimatedActionBarMessage extends SoundableMessage {
 
             if(frameId >= frameList.size()) {
                 task.stop();
-                animatedActionBarTasks.remove(player);
+                animatedActionBarTasks.remove(receiver);
                 return;
             }
 
@@ -74,13 +75,13 @@ public class AnimatedActionBarMessage extends SoundableMessage {
             if(startKeepMessageVisible.get() && task.getExecutions() % 20 == 0) { // refresh every 1.5 seconds actionbar to keep visible longer frames
                 ActionBarAnimationData previousFrameToKeep = frameList.get(previousFrame.get());
 
-                sendActionBar(player, Utils.hexComponent(previousFrameToKeep.getMessage()));
+                sendActionBar(receiver, Utils.hexComponent(previousFrameToKeep.getMessage()));
             }
 
             if(task.getExecutions() < time) return;
 
             startKeepMessageVisible.set(true);
-            sendActionBar(player, Utils.hexComponent(frame.getMessage()));
+            sendActionBar(receiver, Utils.hexComponent(frame.getMessage()));
             currentFrame.incrementAndGet();
             previousFrame.set(currentFrame.get() - 1);
             allFramesTime.addAndGet(frameTime);

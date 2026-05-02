@@ -9,7 +9,7 @@ import me.kubaw208.messageapi.structs.SoundableMessage;
 import me.kubaw208.messageapi.utils.Utils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
+import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 @JsonTypeName("CHAT")
@@ -25,10 +25,10 @@ public class ChatMessage extends SoundableMessage {
     }
 
     @Override
-    public ChatMessage sendToInternal(@NotNull Player player) {
-        applySound(player);
-        applyCommands(player);
-        sendMessage(player, Utils.hexComponent(message));
+    public ChatMessage sendToInternal(@NotNull CommandSender receiver) {
+        applySound(receiver);
+        applyCommands(receiver);
+        sendMessage(receiver, Utils.hexComponent(message));
         return this;
     }
 

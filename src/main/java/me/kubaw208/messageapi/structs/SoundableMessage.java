@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import me.kubaw208.betterrunnableapi.BetterDelayedRunnable;
 import me.kubaw208.messageapi.utils.Utils;
 import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,10 +44,11 @@ public abstract class SoundableMessage extends LocalizedMessage {
      * <p>
      * This method should be called when sending the message.
      * If no sound paths are configured, no sound will be played.
-     * @param player the player who received the message.
+     * @param sender the player who received the message.
      */
-    protected void applySound(@NotNull Player player) {
+    protected void applySound(@NotNull CommandSender sender) {
         if(getSoundPaths().isEmpty()) return;
+        if(!(sender instanceof Player player)) return;
 
         new BetterDelayedRunnable(plugin, task -> {
             if(!player.isOnline()) return;

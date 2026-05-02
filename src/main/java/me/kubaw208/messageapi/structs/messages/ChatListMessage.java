@@ -8,7 +8,7 @@ import me.kubaw208.messageapi.structs.SoundableMessage;
 import me.kubaw208.messageapi.utils.Utils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
+import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -26,12 +26,12 @@ public class ChatListMessage extends SoundableMessage {
     }
 
     @Override
-    public ChatListMessage sendToInternal(@NotNull Player player) {
-        applySound(player);
-        applyCommands(player);
+    public ChatListMessage sendToInternal(@NotNull CommandSender receiver) {
+        applySound(receiver);
+        applyCommands(receiver);
 
         for(String message : messages) {
-            sendMessage(player, Utils.hexComponent(message));
+            sendMessage(receiver, Utils.hexComponent(message));
         }
         return this;
     }

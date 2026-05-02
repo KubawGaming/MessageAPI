@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import me.kubaw208.messageapi.structs.SoundableMessage;
 import me.kubaw208.messageapi.utils.Utils;
-import org.bukkit.entity.Player;
+import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 @JsonTypeName("ACTIONBAR")
@@ -23,10 +23,10 @@ public class ActionBarMessage extends SoundableMessage {
     }
 
     @Override
-    public ActionBarMessage sendToInternal(@NotNull Player player) {
-        applySound(player);
-        applyCommands(player);
-        sendActionBar(player, Utils.hexComponent(message));
+    public ActionBarMessage sendToInternal(@NotNull CommandSender receiver) {
+        applySound(receiver);
+        applyCommands(receiver);
+        sendActionBar(receiver, Utils.hexComponent(message));
         return this;
     }
 

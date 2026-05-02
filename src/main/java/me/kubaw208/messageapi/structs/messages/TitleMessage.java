@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import me.kubaw208.messageapi.structs.SoundableMessage;
 import me.kubaw208.messageapi.utils.Utils;
-import org.bukkit.entity.Player;
+import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 @JsonTypeName("TITLE")
@@ -37,10 +37,10 @@ public class TitleMessage extends SoundableMessage {
     }
 
     @Override
-    public TitleMessage sendToInternal(@NotNull Player player) {
-        applySound(player);
-        applyCommands(player);
-        sendTitle(player,
+    public TitleMessage sendToInternal(@NotNull CommandSender receiver) {
+        applySound(receiver);
+        applyCommands(receiver);
+        sendTitle(receiver,
                 Utils.hexComponent(title),
                 Utils.hexComponent(subtitle),
                 fadeIn != null ? fadeIn : 0,

@@ -52,7 +52,7 @@ import java.util.function.Predicate;
 public abstract class Message implements Cloneable {
 
     protected static JavaPlugin plugin;
-    protected static BukkitAudiences adventure;
+    protected static BukkitAudiences audience;
 
     @Setter @Getter private static ObjectMapper objectMapper;
     private static final Set<Class<?>> registeredMessageTypes = ConcurrentHashMap.newKeySet();
@@ -66,7 +66,7 @@ public abstract class Message implements Cloneable {
      */
     public static void init(JavaPlugin plugin) {
         Message.plugin = plugin;
-        Message.adventure = BukkitAudiences.create(plugin);
+        Message.audience = BukkitAudiences.create(plugin);
 
         registerMessageType(EmptyMessage.class);
         registerMessageType(ChatMessage.class);
@@ -107,10 +107,10 @@ public abstract class Message implements Cloneable {
 
     /**
      * Sends this message to the specified player.
-     * @param player the player who will receive the message.
+     * @param receiver the player who will receive the message.
      * @return this Message instance for chaining.
      */
-    protected abstract Message sendToInternal(@NotNull Player player);
+    protected abstract Message sendToInternal(@NotNull CommandSender receiver);
 
     /**
      * Replaces occurrences of the given placeholder in this message.
@@ -123,43 +123,43 @@ public abstract class Message implements Cloneable {
 
     /**
      * Sends this message to the specified player after a delay (in ticks).
-     * @param player the player who will receive the message.
+     * @param receiver the player who will receive the message.
      * @param delayInTicks the delay before sending the message (in server ticks).
      * @return this Message instance for chaining.
      */
-    private Message sendToInternal(@NotNull Player player, int delayInTicks) {
-        new BetterDelayedRunnable(plugin, task -> sendToInternal(player), delayInTicks);
+    private Message sendToInternal(@NotNull CommandSender receiver, int delayInTicks) {
+        new BetterDelayedRunnable(plugin, task -> sendToInternal(receiver), delayInTicks);
         return this;
     }
 
     /**
      * Sends this message to the specified player.
-     * @param player the player who will receive the message.
+     * @param receiver the player who will receive the message.
      * @return this Message instance for chaining.
      */
-    public Message sendTo(@NotNull Player player) {
-        return sendToInternal(player, getMessageDelay());
+    public Message sendTo(@NotNull CommandSender receiver) {
+        return sendToInternal(receiver, getMessageDelay());
     }
 
     /**
      * Sends this message to the specified player after a delay (in ticks).
-     * @param player the player who will receive the message.
+     * @param receiver the player who will receive the message.
      * @param delayInTicks the delay before sending the message (in server ticks).
      * @return this Message instance for chaining.
      */
-    public Message sendTo(@NotNull Player player, int delayInTicks) {
-        return sendToInternal(player, delayInTicks);
+    public Message sendTo(@NotNull CommandSender receiver, int delayInTicks) {
+        return sendToInternal(receiver, delayInTicks);
     }
 
     /**
      * Sends this message to the specified players.
-     * @param players the players who will receive the message.
+     * @param receivers the players who will receive the message.
      * @return this Message instance for chaining.
      */
-    public Message sendTo(@NotNull Iterable<? extends Player> players) {
+    public Message sendTo(@NotNull Iterable<? extends CommandSender> receivers) {
         new BetterDelayedRunnable(plugin, task -> {
-            for(Player player : players) {
-                sendToInternal(player);
+            for(CommandSender receiver : receivers) {
+                sendToInternal(receiver);
             }
         }, getMessageDelay());
         return this;
@@ -167,14 +167,14 @@ public abstract class Message implements Cloneable {
 
     /**
      * Sends this message to the specified players after a delay (in ticks).
-     * @param players the players who will receive the message.
+     * @param receivers the players who will receive the message.
      * @param delayInTicks the delay before sending the message (in server ticks).
      * @return this Message instance for chaining.
      */
-    public Message sendTo(@NotNull Iterable<? extends Player> players, int delayInTicks) {
+    public Message sendTo(@NotNull Iterable<? extends CommandSender> receivers, int delayInTicks) {
         new BetterDelayedRunnable(plugin, task -> {
-            for(Player player : players) {
-                sendToInternal(player);
+            for(CommandSender receiver : receivers) {
+                sendToInternal(receiver);
             }
         }, delayInTicks);
         return this;
@@ -182,13 +182,13 @@ public abstract class Message implements Cloneable {
 
     /**
      * Sends this message to the specified players.
-     * @param players the players who will receive the message.
+     * @param receivers the players who will receive the message.
      * @return this Message instance for chaining.
      */
-    public Message sendTo(Player... players) {
+    public Message sendTo(CommandSender... receivers) {
         new BetterDelayedRunnable(plugin, task -> {
-            for(Player player : players) {
-                sendToInternal(player);
+            for(CommandSender receiver : receivers) {
+                sendToInternal(receiver);
             }
         }, getMessageDelay());
         return this;
@@ -196,14 +196,14 @@ public abstract class Message implements Cloneable {
 
     /**
      * Sends this message to the specified players after a delay (in ticks).
-     * @param players the players who will receive the message.
+     * @param receivers the players who will receive the message.
      * @param delayInTicks the delay before sending the message (in server ticks).
      * @return this Message instance for chaining.
      */
-    public Message sendTo(int delayInTicks, Player... players) {
+    public Message sendTo(int delayInTicks, CommandSender... receivers) {
         new BetterDelayedRunnable(plugin, task -> {
-            for(Player player : players) {
-                sendToInternal(player);
+            for(CommandSender receiver : receivers) {
+                sendToInternal(receiver);
             }
         }, delayInTicks);
         return this;
@@ -238,41 +238,41 @@ public abstract class Message implements Cloneable {
 
     /**
      * Sends this message to the specified player if that player has the given permission.
-     * @param player the player who may receive the message.
+     * @param receiver the player who may receive the message.
      * @param permission the permission required for the player to receive the message.
      * @return this Message instance for chaining.
      */
-    public Message sendTo(@NotNull Player player, @NotNull String permission) {
-        if(player.hasPermission(permission))
-            sendToInternal(player, getMessageDelay());
+    public Message sendTo(@NotNull CommandSender receiver, @NotNull String permission) {
+        if(receiver.hasPermission(permission))
+            sendToInternal(receiver, getMessageDelay());
         return this;
     }
 
     /**
      * Sends this message to the specified player if that player has the given permission, after a delay (in ticks).
-     * @param player the player who may receive the message.
+     * @param receiver the player who may receive the message.
      * @param permission the permission required for the player to receive the message.
      * @param delayInTicks the delay before sending the message (in server ticks).
      * @return this Message instance for chaining.
      */
-    public Message sendTo(@NotNull Player player, @NotNull String permission, int delayInTicks) {
-        if(player.hasPermission(permission))
-            sendToInternal(player, delayInTicks);
+    public Message sendTo(@NotNull CommandSender receiver, @NotNull String permission, int delayInTicks) {
+        if(receiver.hasPermission(permission))
+            sendToInternal(receiver, delayInTicks);
         return this;
     }
 
     /**
      * Sends this message to the specified players who have the given permission.
-     * @param players the players who may receive the message.
+     * @param receivers the players who may receive the message.
      * @param permission the permission required to receive the message.
      * @return this Message instance for chaining.
      */
-    public Message sendTo(@NotNull Iterable<? extends Player> players, @NotNull String permission) {
+    public Message sendTo(@NotNull Iterable<? extends CommandSender> receivers, @NotNull String permission) {
         new BetterDelayedRunnable(plugin, task -> {
-            for(Player player : players) {
-                if(!player.hasPermission(permission)) continue;
+            for(CommandSender receiver : receivers) {
+                if(!receiver.hasPermission(permission)) continue;
 
-                sendToInternal(player);
+                sendToInternal(receiver);
             }
         }, getMessageDelay());
         return this;
@@ -280,17 +280,17 @@ public abstract class Message implements Cloneable {
 
     /**
      * Sends this message to the specified players who have the given permission, after a delay (in ticks).
-     * @param players the players who may receive the message.
+     * @param receivers the players who may receive the message.
      * @param permission the permission required to receive the message.
      * @param delayInTicks the delay before sending the message (in server ticks).
      * @return this Message instance for chaining.
      */
-    public Message sendTo(@NotNull Iterable<? extends Player> players, @NotNull String permission, int delayInTicks) {
+    public Message sendTo(@NotNull Iterable<? extends CommandSender> receivers, @NotNull String permission, int delayInTicks) {
         new BetterDelayedRunnable(plugin, task -> {
-            for(Player player : players) {
-                if(!player.hasPermission(permission)) continue;
+            for(CommandSender receiver : receivers) {
+                if(!receiver.hasPermission(permission)) continue;
 
-                sendToInternal(player);
+                sendToInternal(receiver);
             }
         }, delayInTicks);
         return this;
@@ -463,42 +463,42 @@ public abstract class Message implements Cloneable {
 
     /**
      * Sends this message to a single player if they match the given predicate.
-     * @param player the player to check and potentially send the message to.
+     * @param receiver the player to check and potentially send the message to.
      * @param filter predicate deciding whether the player should receive the message.
      * @return this Message instance for chaining.
      */
-    public Message sendTo(@NotNull Player player, @NotNull Predicate<Player> filter) {
-        if(!filter.test(player)) return this;
+    public Message sendTo(@NotNull CommandSender receiver, @NotNull Predicate<CommandSender> filter) {
+        if(!filter.test(receiver)) return this;
 
-        return sendToInternal(player);
+        return sendToInternal(receiver);
     }
 
     /**
      * Sends this message to a single player if they match the given predicate after a delay (in ticks).
-     * @param player the player to check and potentially send the message to.
+     * @param receiver the player to check and potentially send the message to.
      * @param filter predicate deciding whether the player should receive the message.
      * @param delayInTicks delay before sending the message (in server ticks).
      * @return this Message instance for chaining.
      */
-    public Message sendTo(@NotNull Player player, @NotNull Predicate<Player> filter, int delayInTicks) {
-        if(!filter.test(player)) return this;
+    public Message sendTo(@NotNull CommandSender receiver, @NotNull Predicate<CommandSender> filter, int delayInTicks) {
+        if(!filter.test(receiver)) return this;
 
-        new BetterDelayedRunnable(plugin, task -> sendToInternal(player), delayInTicks);
+        new BetterDelayedRunnable(plugin, task -> sendToInternal(receiver), delayInTicks);
         return this;
     }
 
     /**
      * Sends this message to players matching the given predicate.
-     * @param players all available players to filter.
+     * @param receivers all available players to filter.
      * @param filter predicate deciding who receives the message.
      * @return this Message instance for chaining.
      */
-    public Message sendTo(@NotNull Iterable<? extends Player> players, @NotNull Predicate<Player> filter) {
+    public Message sendTo(@NotNull Iterable<? extends CommandSender> receivers, @NotNull Predicate<CommandSender> filter) {
         new BetterDelayedRunnable(plugin, task -> {
-            for(Player player : players) {
-                if(!filter.test(player)) continue;
+            for(CommandSender receiver : receivers) {
+                if(!filter.test(receiver)) continue;
 
-                sendToInternal(player);
+                sendToInternal(receiver);
             }
         }, getMessageDelay());
         return this;
@@ -506,17 +506,17 @@ public abstract class Message implements Cloneable {
 
     /**
      * Sends this message to players matching the given predicate after a delay (in ticks).
-     * @param players all available players to filter.
+     * @param receivers all available players to filter.
      * @param filter predicate deciding who receives the message.
      * @param delayInTicks delay before sending the message (in server ticks).
      * @return this Message instance for chaining.
      */
-    public Message sendTo(@NotNull Iterable<? extends Player> players, @NotNull Predicate<Player> filter, int delayInTicks) {
+    public Message sendTo(@NotNull Iterable<? extends CommandSender> receivers, @NotNull Predicate<CommandSender> filter, int delayInTicks) {
         new BetterDelayedRunnable(plugin, task -> {
-            for(Player player : players) {
-                if(!filter.test(player)) continue;
+            for(CommandSender receiver : receivers) {
+                if(!filter.test(receiver)) continue;
 
-                sendToInternal(player);
+                sendToInternal(receiver);
             }
         }, delayInTicks);
         return this;
@@ -612,33 +612,33 @@ public abstract class Message implements Cloneable {
 
     /**
      * Sends a chat message to the specified player using the Adventure API.
-     * @param player the player who will receive the message.
+     * @param receiver the player who will receive the message.
      * @param message the message component to send.
      */
-    protected void sendMessage(@NotNull CommandSender player, Component message) {
-        adventure.sender(player).sendMessage(message != null ? message : Component.empty());
+    protected void sendMessage(@NotNull CommandSender receiver, Component message) {
+        audience.sender(receiver).sendMessage(message != null ? message : Component.empty());
     }
 
     /**
      * Sends an actionbar message to the specified player using the Adventure API.
-     * @param player the player who will receive the message.
+     * @param sender the player who will receive the message.
      * @param message the message component to send.
      */
-    protected void sendActionBar(@NotNull Player player, Component message) {
-        adventure.player(player).sendActionBar(message != null ? message : Component.empty());
+    protected void sendActionBar(@NotNull CommandSender sender, Component message) {
+        audience.sender(sender).sendActionBar(message != null ? message : Component.empty());
     }
 
     /**
      * Sends a title to the specified player using the Adventure API.
-     * @param player the player who will receive the title.
+     * @param sender the player who will receive the title.
      * @param title the title component.
      * @param subtitle the subtitle component.
      * @param fadeIn the fade-in time in milliseconds.
      * @param stay the display time in milliseconds.
      * @param fadeOut the fade-out time in milliseconds.
      */
-    protected void sendTitle(@NotNull Player player, Component title, Component subtitle, int fadeIn, int stay, int fadeOut) {
-        var audience = adventure.player(player);
+    protected void sendTitle(@NotNull CommandSender sender, Component title, Component subtitle, int fadeIn, int stay, int fadeOut) {
+        var audience = Message.audience.sender(sender);
 
         audience.sendTitlePart(
                 TitlePart.TIMES,
@@ -654,15 +654,15 @@ public abstract class Message implements Cloneable {
 
     /**
      * Executes configured commands associated with this message.
-     * @param player the player used for placeholder replacement ( {PLAYER} ).
+     * @param sender the player used for placeholder replacement ( {PLAYER} ).
      */
-    protected void applyCommands(@NotNull Player player) {
+    protected void applyCommands(@NotNull CommandSender sender) {
         for(String command : commands) {
             if(command == null || command.isBlank()) continue;
 
             Bukkit.dispatchCommand(
                     Bukkit.getConsoleSender(),
-                    command.replace("{PLAYER}", player.getName())
+                    command.replace("{PLAYER}", sender.getName())
             );
         }
     }

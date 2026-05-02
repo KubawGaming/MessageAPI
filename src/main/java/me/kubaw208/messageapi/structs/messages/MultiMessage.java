@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.Getter;
 import me.kubaw208.messageapi.structs.Message;
 import me.kubaw208.messageapi.structs.SoundableMessage;
-import org.bukkit.entity.Player;
+import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -24,9 +24,9 @@ public class MultiMessage extends SoundableMessage {
     }
 
     @Override
-    public MultiMessage sendToInternal(@NotNull Player player) {
+    public MultiMessage sendToInternal(@NotNull CommandSender receiver) {
         for(Message message : messages) {
-            message.sendTo(player);
+            message.sendTo(receiver);
         }
         return this;
     }
