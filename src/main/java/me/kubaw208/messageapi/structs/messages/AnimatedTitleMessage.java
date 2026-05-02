@@ -12,7 +12,6 @@ import me.kubaw208.messageapi.structs.SoundableMessage;
 import me.kubaw208.messageapi.structs.TitleAnimationData;
 import me.kubaw208.messageapi.utils.Utils;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -59,12 +58,6 @@ public class AnimatedTitleMessage extends SoundableMessage {
             animatedTitleTasks.get(receiver).stop();
 
         animatedTitleTasks.put(receiver, new BetterRunnable(plugin, task -> {
-            if(receiver instanceof Player player && !player.isOnline()) {
-                task.stop();
-                animatedTitleTasks.remove(receiver);
-                return;
-            }
-
             int frameId = currentFrame.get();
 
             if(frameId >= frameList.size()) {
