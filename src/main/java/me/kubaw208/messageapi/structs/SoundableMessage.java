@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A message that can play a sound effect when delivered to a player.
+ * A message that can play a sound effect when delivered to a message recipient.
  * <p>
  * Extends {@link LocalizedMessage} by adding optional sound configuration
  * such as sound paths, volume, pitch, delay, and playback location.
@@ -40,7 +40,7 @@ public abstract class SoundableMessage extends LocalizedMessage {
     }
 
     /**
-     * Plays the configured sound to the specified player.
+     * Plays the configured sound to the specified recipient. Only works if the recipient is a player.
      * <p>
      * This method should be called when sending the message.
      * If no sound paths are configured, no sound will be played.

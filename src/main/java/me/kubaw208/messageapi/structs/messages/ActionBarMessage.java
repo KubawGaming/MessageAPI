@@ -23,10 +23,10 @@ public class ActionBarMessage extends SoundableMessage {
     }
 
     @Override
-    public ActionBarMessage sendToInternal(@NotNull CommandSender receiver) {
-        applySound(receiver);
-        applyCommands(receiver);
-        sendActionBar(receiver, Utils.hexComponent(message));
+    public ActionBarMessage sendToInternal(@NotNull CommandSender recipient) {
+        applySound(recipient);
+        applyCommands(recipient);
+        sendActionBar(recipient, Utils.hexComponent(message));
         return this;
     }
 

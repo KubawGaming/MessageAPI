@@ -37,10 +37,10 @@ public class TitleMessage extends SoundableMessage {
     }
 
     @Override
-    public TitleMessage sendToInternal(@NotNull CommandSender receiver) {
-        applySound(receiver);
-        applyCommands(receiver);
-        sendTitle(receiver,
+    public TitleMessage sendToInternal(@NotNull CommandSender recipient) {
+        applySound(recipient);
+        applyCommands(recipient);
+        sendTitle(recipient,
                 Utils.hexComponent(title),
                 Utils.hexComponent(subtitle),
                 fadeIn != null ? fadeIn : 0,

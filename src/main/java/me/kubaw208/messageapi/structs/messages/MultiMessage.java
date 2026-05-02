@@ -24,9 +24,9 @@ public class MultiMessage extends SoundableMessage {
     }
 
     @Override
-    public MultiMessage sendToInternal(@NotNull CommandSender receiver) {
+    public MultiMessage sendToInternal(@NotNull CommandSender recipient) {
         for(Message message : messages) {
-            message.sendTo(receiver);
+            message.sendTo(recipient);
         }
         return this;
     }

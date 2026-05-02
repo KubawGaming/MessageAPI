@@ -44,9 +44,9 @@ public class AnimatedTitleMessage extends SoundableMessage {
     }
 
     @Override
-    public AnimatedTitleMessage sendToInternal(@NotNull CommandSender receiver) {
-        applySound(receiver);
-        applyCommands(receiver);
+    public AnimatedTitleMessage sendToInternal(@NotNull CommandSender recipient) {
+        applySound(recipient);
+        applyCommands(recipient);
 
         if(frames.isEmpty()) return this;
 
@@ -54,15 +54,15 @@ public class AnimatedTitleMessage extends SoundableMessage {
         AtomicInteger currentFrame = new AtomicInteger(0);
         AtomicInteger allFramesTime = new AtomicInteger(0);
 
-        if(animatedTitleTasks.containsKey(receiver)) // prevent multiple animations for one player
-            animatedTitleTasks.get(receiver).stop();
+        if(animatedTitleTasks.containsKey(recipient)) // prevent multiple animations for one player
+            animatedTitleTasks.get(recipient).stop();
 
-        animatedTitleTasks.put(receiver, new BetterRunnable(plugin, task -> {
+        animatedTitleTasks.put(recipient, new BetterRunnable(plugin, task -> {
             int frameId = currentFrame.get();
 
             if(frameId >= frameList.size()) {
                 task.stop();
-                animatedTitleTasks.remove(receiver);
+                animatedTitleTasks.remove(recipient);
                 return;
             }
 
@@ -73,7 +73,7 @@ public class AnimatedTitleMessage extends SoundableMessage {
             if(task.getExecutions() < time) return;
 
             sendTitle(
-                    receiver,
+                    recipient,
                     Utils.hexComponent(frame.getTitle()),
                     Utils.hexComponent(frame.getSubtitle()),
                     frame.getFadeIn() != null ? frame.getFadeIn() : (defaultFadeIn != null ? defaultFadeIn : 0),

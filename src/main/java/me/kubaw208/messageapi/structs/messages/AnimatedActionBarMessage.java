@@ -37,9 +37,9 @@ public class AnimatedActionBarMessage extends SoundableMessage {
     }
 
     @Override
-    public AnimatedActionBarMessage sendToInternal(@NotNull CommandSender receiver) {
-        applySound(receiver);
-        applyCommands(receiver);
+    public AnimatedActionBarMessage sendToInternal(@NotNull CommandSender recipient) {
+        applySound(recipient);
+        applyCommands(recipient);
 
         if(frames.isEmpty()) return this;
 
@@ -49,15 +49,15 @@ public class AnimatedActionBarMessage extends SoundableMessage {
         AtomicInteger allFramesTime = new AtomicInteger(0);
         AtomicBoolean startKeepMessageVisible = new AtomicBoolean(false);
 
-        if(animatedActionBarTasks.containsKey(receiver)) // prevent multiple animations for one sender
-            animatedActionBarTasks.get(receiver).stop();
+        if(animatedActionBarTasks.containsKey(recipient)) // prevent multiple animations for one sender
+            animatedActionBarTasks.get(recipient).stop();
 
-        animatedActionBarTasks.put(receiver, new BetterRunnable(plugin, task -> {
+        animatedActionBarTasks.put(recipient, new BetterRunnable(plugin, task -> {
             int frameId = currentFrame.get();
 
             if(frameId >= frameList.size()) {
                 task.stop();
-                animatedActionBarTasks.remove(receiver);
+                animatedActionBarTasks.remove(recipient);
                 return;
             }
 
@@ -68,13 +68,13 @@ public class AnimatedActionBarMessage extends SoundableMessage {
             if(startKeepMessageVisible.get() && task.getExecutions() % 20 == 0) { // refresh every 1.5 seconds actionbar to keep visible longer frames
                 ActionBarAnimationData previousFrameToKeep = frameList.get(previousFrame.get());
 
-                sendActionBar(receiver, Utils.hexComponent(previousFrameToKeep.getMessage()));
+                sendActionBar(recipient, Utils.hexComponent(previousFrameToKeep.getMessage()));
             }
 
             if(task.getExecutions() < time) return;
 
             startKeepMessageVisible.set(true);
-            sendActionBar(receiver, Utils.hexComponent(frame.getMessage()));
+            sendActionBar(recipient, Utils.hexComponent(frame.getMessage()));
             currentFrame.incrementAndGet();
             previousFrame.set(currentFrame.get() - 1);
             allFramesTime.addAndGet(frameTime);

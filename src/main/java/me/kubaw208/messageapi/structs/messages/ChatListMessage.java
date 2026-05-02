@@ -26,12 +26,12 @@ public class ChatListMessage extends SoundableMessage {
     }
 
     @Override
-    public ChatListMessage sendToInternal(@NotNull CommandSender receiver) {
-        applySound(receiver);
-        applyCommands(receiver);
+    public ChatListMessage sendToInternal(@NotNull CommandSender recipient) {
+        applySound(recipient);
+        applyCommands(recipient);
 
         for(String message : messages) {
-            sendMessage(receiver, Utils.hexComponent(message));
+            sendMessage(recipient, Utils.hexComponent(message));
         }
         return this;
     }

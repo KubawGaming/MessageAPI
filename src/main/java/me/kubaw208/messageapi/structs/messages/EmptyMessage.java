@@ -9,9 +9,9 @@ import org.jetbrains.annotations.NotNull;
 public class EmptyMessage extends SoundableMessage {
 
     @Override
-    public EmptyMessage sendToInternal(@NotNull CommandSender receiver) {
-        applySound(receiver);
-        applyCommands(receiver);
+    public EmptyMessage sendToInternal(@NotNull CommandSender recipient) {
+        applySound(recipient);
+        applyCommands(recipient);
         return this;
     }
 

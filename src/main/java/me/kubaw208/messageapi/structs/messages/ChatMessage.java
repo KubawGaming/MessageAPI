@@ -25,10 +25,10 @@ public class ChatMessage extends SoundableMessage {
     }
 
     @Override
-    public ChatMessage sendToInternal(@NotNull CommandSender receiver) {
-        applySound(receiver);
-        applyCommands(receiver);
-        sendMessage(receiver, Utils.hexComponent(message));
+    public ChatMessage sendToInternal(@NotNull CommandSender recipient) {
+        applySound(recipient);
+        applyCommands(recipient);
+        sendMessage(recipient, Utils.hexComponent(message));
         return this;
     }
 
