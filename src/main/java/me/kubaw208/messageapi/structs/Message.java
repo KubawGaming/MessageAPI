@@ -62,11 +62,12 @@ public abstract class Message implements Cloneable {
 
     /**
      * Initializes the message system with the given plugin instance and registers default message types.
+     * Also initializes the BukkitAudiences API for sending messages.
      * @param plugin the plugin instance used for scheduling and Adventure API.
+     * @return true if the BukkitAudiences API was successfully initialized, false otherwise.
      */
-    public static void init(JavaPlugin plugin) {
+    public static boolean init(JavaPlugin plugin) {
         Message.plugin = plugin;
-        Message.audience = BukkitAudiences.create(plugin);
 
         registerMessageType(EmptyMessage.class);
         registerMessageType(ChatMessage.class);
@@ -76,6 +77,21 @@ public abstract class Message implements Cloneable {
         registerMessageType(TitleMessage.class);
         registerMessageType(AnimatedTitleMessage.class);
         registerMessageType(MultiMessage.class);
+
+        try {
+            Message.audience = BukkitAudiences.create(plugin);
+        } catch(Exception ignored) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Initializes the BukkitAudiences API for sending messages.
+     * @param audience the BukkitAudiences instance to use for sending messages by API.
+     */
+    public static void initAudience(BukkitAudiences audience) {
+        Message.audience = audience;
     }
 
     /**
