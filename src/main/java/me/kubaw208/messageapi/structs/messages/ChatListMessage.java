@@ -18,10 +18,10 @@ import java.util.List;
 @Getter
 public class ChatListMessage extends SoundableMessage {
 
-    @JsonProperty("message") private ArrayList<String> messages;
+    @JsonProperty("messages") private ArrayList<String> messages;
 
     @JsonCreator
-    public ChatListMessage(@NotNull @JsonProperty("message") List<String> messages) {
+    public ChatListMessage(@NotNull @JsonProperty("messages") List<String> messages) {
         this.messages = new ArrayList<>(messages);
     }
 
