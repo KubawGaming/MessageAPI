@@ -63,7 +63,15 @@
         code {
             font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
             font-size: 14px;
-            color: #aaa;
+            color: #e0e0e0;
+            background-color: #2a2a2a;
+            padding: 2px 5px;
+            border-radius: 4px;
+        }
+
+        pre code {
+            background-color: transparent;
+            padding: 0;
         }
 
         a {
@@ -79,6 +87,44 @@
             border: none;
             border-top: 1px solid #333;
             margin: 40px 0;
+        }
+
+        .badge-container {
+            background-color: #252525;
+            border-radius: 8px;
+            padding: 12px 20px;
+            margin: 20px 0;
+            border-left: 4px solid #3498db;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .badge-container img {
+            height: 20px;
+            vertical-align: middle;
+        }
+
+        .tip {
+            background-color: #1e2a36;
+            border-left: 4px solid #3498db;
+            padding: 12px 20px;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+
+        .tip strong {
+            color: #5dade2;
+        }
+
+        .version-placeholder {
+            background-color: #2c3e2c;
+            font-weight: bold;
+            color: #98fb98;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
         }
     </style>
 </head>
@@ -96,6 +142,15 @@
 
     <h2>Installation</h2>
 
+    <!-- Dynamic version badge from JitPack -->
+    <div class="badge-container">
+        <span>📦 <strong>Latest version:</strong></span>
+        <a href="https://jitpack.io/#KubawGaming/MessageAPI" target="_blank">
+            <img src="https://jitpack.io/v/KubawGaming/MessageAPI.svg" alt="JitPack Version">
+        </a>
+        <span style="font-size: 0.9rem;">(replace <code class="version-placeholder">LATEST_VERSION</code> below with the version shown on the badge)</span>
+    </div>
+
     <h3>Maven</h3>
     <p>Add the JitPack repository and MessageAPI dependency to your <code>pom.xml</code>:</p>
     <pre><code>&lt;repositories&gt;
@@ -109,7 +164,7 @@
     &lt;dependency&gt;
         &lt;groupId&gt;com.github.KubawGaming&lt;/groupId&gt;
         &lt;artifactId&gt;MessageAPI&lt;/artifactId&gt;
-        &lt;version&gt;1.0.0&lt;/version&gt;
+        &lt;version&gt;LATEST_VERSION&lt;/version&gt;
     &lt;/dependency&gt;
 &lt;/dependencies&gt;</code></pre>
 
@@ -120,7 +175,7 @@
 }
 
 dependencies {
-    implementation 'com.github.KubawGaming:MessageAPI:1.0.0'
+    implementation 'com.github.KubawGaming:MessageAPI:LATEST_VERSION'
 }</code></pre>
 
     <h3>Gradle (Kotlin DSL)</h3>
@@ -130,11 +185,43 @@ dependencies {
 }
 
 dependencies {
-    implementation("com.github.KubawGaming:MessageAPI:1.0.0")
+    implementation("com.github.KubawGaming:MessageAPI:LATEST_VERSION")
 }</code></pre>
+
+    <div class="tip">
+        <strong>💡 Note:</strong> Always use the actual version number shown on the JitPack badge above. <code>LATEST_VERSION</code> is just a placeholder.
+    </div>
 
     <h2>Relocation (Paper 1.17-1.19)</h2>
     <p>If you're targeting Paper versions between 1.17 and 1.19, you need to relocate the Adventure API to avoid conflicts:</p>
+	
+    <h3>Maven (with Maven Shade Plugin)</h3>
+    <p>For Maven, use the <code>maven-shade-plugin</code> with the appropriate relocation:</p>
+    <pre><code>&lt;build&gt;
+    &lt;plugins&gt;
+        &lt;plugin&gt;
+            &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+            &lt;artifactId&gt;maven-shade-plugin&lt;/artifactId&gt;
+            &lt;version&gt;3.5.1&lt;/version&gt;
+            &lt;executions&gt;
+                &lt;execution&gt;
+                    &lt;phase&gt;package&lt;/phase&gt;
+                    &lt;goals&gt;
+                        &lt;goal&gt;shade&lt;/goal&gt;
+                    &lt;/goals&gt;
+                    &lt;configuration&gt;
+                        &lt;relocations&gt;
+                            &lt;relocation&gt;
+                                &lt;pattern&gt;net.kyori&lt;/pattern&gt;
+                                &lt;shadedPattern&gt;me.kubaw208.messageapi.libs.kyori&lt;/shadedPattern&gt;
+                            &lt;/relocation&gt;
+                        &lt;/relocations&gt;
+                    &lt;/configuration&gt;
+                &lt;/execution&gt;
+            &lt;/executions&gt;
+        &lt;/plugin&gt;
+    &lt;/plugins&gt;
+&lt;/build&gt;</code></pre>
 
     <h3>Gradle (Groovy)</h3>
     <pre><code>plugins {
@@ -154,6 +241,10 @@ tasks.shadowJar {
     relocate("net.kyori", "me.kubaw208.messageapi.libs.kyori")
 }</code></pre>
 
+    <div class="tip">
+        <strong>📌 Important:</strong> Relocation is only required for Paper 1.17-1.19. For Paper 1.20+, Adventure API is already included in the server and relocation is optional.
+    </div>
+
     <h2>Troubleshooting</h2>
 
     <h3>MessageAPI not initializing</h3>
@@ -161,6 +252,12 @@ tasks.shadowJar {
 
     <h3>Messages not displaying colors</h3>
     <p>Ensure you're using MiniMessage formatting tags (e.g., <code>&lt;green&gt;</code>, <code>&lt;#FF5555&gt;</code>) instead of legacy color codes (e.g., <code>&amp;a</code>, <code>&amp;c</code>).</p>
+
+    <h3>Version placeholder</h3>
+    <p>If you see <code>LATEST_VERSION</code> in your code examples, remember to replace it with the actual version number from the JitPack badge above (e.g., <code>1.0.2</code>). Do not use <code>LATEST</code> in production — always pin a specific version.</p>
+
+    <h3>JitPack not resolving the dependency</h3>
+    <p>Make sure your build system has internet access and that you've added the JitPack repository correctly. Clean your local cache if needed (<code>~/.m2/repository</code> for Maven, or <code>~/.gradle/caches</code> for Gradle).</p>
 
     <hr>
 
