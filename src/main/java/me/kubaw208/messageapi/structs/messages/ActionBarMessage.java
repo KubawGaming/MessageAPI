@@ -10,7 +10,7 @@ import me.kubaw208.messageapi.utils.Utils;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
-@JsonTypeName("ACTIONBAR")
+@JsonTypeName("ACTION_BAR")
 @Getter
 @Setter
 public class ActionBarMessage extends SoundableMessage {

@@ -12,6 +12,7 @@ import me.kubaw208.messageapi.structs.ActionBarAnimationData;
 import me.kubaw208.messageapi.structs.SoundableMessage;
 import me.kubaw208.messageapi.utils.Utils;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@JsonTypeName("ANIMATED_ACTIONBAR")
+@JsonTypeName("ANIMATED_ACTION_BAR")
 @JsonPropertyOrder({"defaultTime"})
 @Getter
 @Accessors(chain = true)
@@ -53,6 +54,12 @@ public class AnimatedActionBarMessage extends SoundableMessage {
             animatedActionBarTasks.get(recipient).stop();
 
         animatedActionBarTasks.put(recipient, new BetterRunnable(plugin, task -> {
+            if(recipient instanceof Player player && !player.isOnline()) {
+                task.stop();
+                animatedActionBarTasks.remove(recipient);
+                return;
+            }
+
             int frameId = currentFrame.get();
 
             if(frameId >= frameList.size()) {
