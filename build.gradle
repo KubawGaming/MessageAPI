@@ -1,11 +1,12 @@
 plugins {
     id 'java'
+    id 'java-library'
     id 'maven-publish'
     id 'com.gradleup.shadow' version '8.3.3'
 }
 
 group = 'me.kubaw208'
-version = '0.3.0'
+version = '0.3.1'
 
 repositories {
     mavenCentral()
@@ -30,7 +31,7 @@ dependencies {
     implementation 'com.github.KubawGaming:BetterRunnableAPI:v7.0.0'
     implementation 'de.exlll:configlib-paper:4.5.0'
     implementation 'de.exlll:configlib-yaml:4.5.0'
-    implementation 'tools.jackson.core:jackson-databind:3.1.2'
+    api 'tools.jackson.core:jackson-databind:3.1.2'
 }
 
 def targetJavaVersion = 17
