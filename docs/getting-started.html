@@ -213,7 +213,7 @@ dependencies {
                         &lt;relocations&gt;
                             &lt;relocation&gt;
                                 &lt;pattern&gt;net.kyori&lt;/pattern&gt;
-                                &lt;shadedPattern&gt;your.customm.path.libs.kyori&lt;/shadedPattern&gt;
+                                &lt;shadedPattern&gt;your.custom.path.libs.kyori&lt;/shadedPattern&gt;
                             &lt;/relocation&gt;
                         &lt;/relocations&gt;
                     &lt;/configuration&gt;
@@ -229,7 +229,7 @@ dependencies {
 }
 
 shadowJar {
-    relocate "net.kyori", "me.kubaw208.messageapi.libs.kyori"
+    relocate "net.kyori", "your.custom.path.libs.kyori"
 }</code></pre>
 
     <h3>Gradle (Kotlin DSL)</h3>
@@ -238,7 +238,7 @@ shadowJar {
 }
 
 tasks.shadowJar {
-    relocate("net.kyori", "your.customm.path.libs.kyori")
+    relocate("net.kyori", "your.custom.path.libs.kyori")
 }</code></pre>
 
     <div class="tip">
