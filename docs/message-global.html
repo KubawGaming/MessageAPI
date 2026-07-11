@@ -165,7 +165,7 @@ message.setMessageDelay(40).sendTo(player);</code></pre>
   parsePlacehodlers: true  # default false</code></pre>
 
     <h3>Developer Usage</h3>
-    <pre><code>Message message = new ChatMessage("&lt;green&gt;Welcome!");
+    <pre><code>Message message = new ChatMessage("&lt;green&gt;Welcome %player_displayname%!");
 
 message.setParsePlaceholders(true).sendTo(player);</code></pre>
 
