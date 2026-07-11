@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.kubaw208.messageapi.structs.SoundableMessage;
 import me.kubaw208.messageapi.utils.Utils;
@@ -15,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 @JsonTypeName("TITLE")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class TitleMessage extends SoundableMessage {
 
     @JsonProperty("title") private String title;
