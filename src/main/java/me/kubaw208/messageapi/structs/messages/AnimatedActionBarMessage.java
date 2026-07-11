@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import me.clip.placeholderapi.PlaceholderAPI;
 import me.kubaw208.betterrunnableapi.BetterRunnable;
 import me.kubaw208.messageapi.structs.ActionBarAnimationData;
 import me.kubaw208.messageapi.structs.SoundableMessage;
@@ -44,6 +45,7 @@ public class AnimatedActionBarMessage extends SoundableMessage {
 
         if(frames.isEmpty()) return this;
 
+        Player playerForPlaceholder = recipient instanceof Player player ? player : null;
         List<ActionBarAnimationData> frameList = frames;
         AtomicInteger previousFrame = new AtomicInteger(0);
         AtomicInteger currentFrame = new AtomicInteger(0);
@@ -75,13 +77,21 @@ public class AnimatedActionBarMessage extends SoundableMessage {
             if(startKeepMessageVisible.get() && task.getExecutions() % 20 == 0) { // refresh every 1.5 seconds actionbar to keep visible longer frames
                 ActionBarAnimationData previousFrameToKeep = frameList.get(previousFrame.get());
 
-                sendActionBar(recipient, Utils.hexComponent(previousFrameToKeep.getMessage()));
+                sendActionBar(recipient, Utils.hexComponent(
+                        getParsePlaceholders()
+                                ? PlaceholderAPI.setPlaceholders(playerForPlaceholder, previousFrameToKeep.getMessage())
+                                : previousFrameToKeep.getMessage()
+                ));
             }
 
             if(task.getExecutions() < time) return;
 
             startKeepMessageVisible.set(true);
-            sendActionBar(recipient, Utils.hexComponent(frame.getMessage()));
+            sendActionBar(recipient, Utils.hexComponent(
+                    getParsePlaceholders()
+                            ? PlaceholderAPI.setPlaceholders(playerForPlaceholder, frame.getMessage())
+                            : frame.getMessage()
+                    ));
             currentFrame.incrementAndGet();
             previousFrame.set(currentFrame.get() - 1);
             allFramesTime.addAndGet(frameTime);

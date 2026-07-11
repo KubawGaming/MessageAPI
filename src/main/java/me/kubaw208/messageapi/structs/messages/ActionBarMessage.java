@@ -5,9 +5,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.Getter;
 import lombok.Setter;
+import me.clip.placeholderapi.PlaceholderAPI;
 import me.kubaw208.messageapi.structs.SoundableMessage;
 import me.kubaw208.messageapi.utils.Utils;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 @JsonTypeName("ACTION_BAR")
@@ -24,9 +26,15 @@ public class ActionBarMessage extends SoundableMessage {
 
     @Override
     public ActionBarMessage sendToInternal(@NotNull CommandSender recipient) {
+        Player playerForPlaceholder = recipient instanceof Player player ? player : null;
+
         applySound(recipient);
         applyCommands(recipient);
-        sendActionBar(recipient, Utils.hexComponent(message));
+        sendActionBar(recipient, Utils.hexComponent(
+                getParsePlaceholders()
+                        ? PlaceholderAPI.setPlaceholders(playerForPlaceholder, message)
+                        : message
+        ));
         return this;
     }
 

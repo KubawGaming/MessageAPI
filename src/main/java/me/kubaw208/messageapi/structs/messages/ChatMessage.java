@@ -5,11 +5,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.Getter;
 import lombok.Setter;
+import me.clip.placeholderapi.PlaceholderAPI;
 import me.kubaw208.messageapi.structs.SoundableMessage;
 import me.kubaw208.messageapi.utils.Utils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 @JsonTypeName("CHAT")
@@ -26,9 +28,15 @@ public class ChatMessage extends SoundableMessage {
 
     @Override
     public ChatMessage sendToInternal(@NotNull CommandSender recipient) {
+        Player playerForPlaceholder = recipient instanceof Player player ? player : null;
+
         applySound(recipient);
         applyCommands(recipient);
-        sendMessage(recipient, Utils.hexComponent(message));
+        sendMessage(recipient, Utils.hexComponent(
+                getParsePlaceholders()
+                        ? PlaceholderAPI.setPlaceholders(playerForPlaceholder, message)
+                        : message
+        ));
         return this;
     }
 

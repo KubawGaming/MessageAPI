@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import me.clip.placeholderapi.PlaceholderAPI;
 import me.kubaw208.betterrunnableapi.BetterRunnable;
 import me.kubaw208.messageapi.structs.SoundableMessage;
 import me.kubaw208.messageapi.structs.TitleAnimationData;
@@ -51,6 +52,7 @@ public class AnimatedTitleMessage extends SoundableMessage {
 
         if(frames.isEmpty()) return this;
 
+        Player playerForPlaceholder = recipient instanceof Player player ? player : null;
         List<TitleAnimationData> frameList = new ArrayList<>(frames);
         AtomicInteger currentFrame = new AtomicInteger(0);
         AtomicInteger allFramesTime = new AtomicInteger(0);
@@ -81,8 +83,16 @@ public class AnimatedTitleMessage extends SoundableMessage {
 
             sendTitle(
                     recipient,
-                    Utils.hexComponent(frame.getTitle()),
-                    Utils.hexComponent(frame.getSubtitle()),
+                    Utils.hexComponent(
+                            getParsePlaceholders()
+                                    ? PlaceholderAPI.setPlaceholders(playerForPlaceholder, frame.getTitle())
+                                    : frame.getTitle()
+                    ),
+                    Utils.hexComponent(
+                            getParsePlaceholders()
+                                    ? PlaceholderAPI.setPlaceholders(playerForPlaceholder, frame.getSubtitle())
+                                    : frame.getSubtitle()
+                    ),
                     frame.getFadeIn() != null ? frame.getFadeIn() : (defaultFadeIn != null ? defaultFadeIn : 0),
                     frame.getStay() != null ? frame.getStay() : (defaultStay != null ? defaultStay : 60),
                     frame.getFadeOut() != null ? frame.getFadeOut() : (defaultFadeOut != null ? defaultFadeOut : 0)

@@ -58,6 +58,7 @@ public abstract class Message implements Cloneable {
     private static final Set<Class<?>> registeredMessageTypes = ConcurrentHashMap.newKeySet();
 
     @JsonProperty("messageDelay") @Setter @Accessors(chain = true) private Integer messageDelay = null;
+    @JsonProperty("parsePlaceholders") @Setter @Accessors(chain = true) protected Boolean parsePlaceholders = null;
     @JsonProperty("commands") @Setter @Accessors(chain = true) protected List<String> commands = new ArrayList<>();
 
     /**
@@ -690,6 +691,15 @@ public abstract class Message implements Cloneable {
      */
     public Integer getMessageDelay() {
         return Objects.requireNonNullElse(messageDelay, 0);
+    }
+
+    /**
+     * Returns if message should be parsed using PlaceholderAPI.
+     * Defaults to false if not specified.
+     * @return the result if message should be parsed using PlaceholderAPI.
+     */
+    public Boolean getParsePlaceholders() {
+        return Objects.requireNonNullElse(parsePlaceholders, false);
     }
 
     @Override
