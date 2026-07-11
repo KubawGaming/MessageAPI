@@ -18,6 +18,7 @@ A lightweight message management library for Minecraft Paper servers. Simplifies
 - **🎬 Animations**: Default message types for animated titles and actionbars
 - **⚡ Command Execution**: You can optionally execute commands when messages are sent
 - **🔗 Method Chaining**: Fluent API for clean, readable code
+- **🔌 PlaceholderAPI Support**: Built-in integration with PlaceholderAPI for dynamic placeholders in messages (e.g. player names, statistics, and custom placeholders)
 
 ## 📚 Examples
 
