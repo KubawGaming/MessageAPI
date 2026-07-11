@@ -154,6 +154,23 @@ message.setMessageDelay(40).sendTo(player);</code></pre>
 
     <hr>
 
+    <h2>PlaceholderAPI support</h2>
+
+    <p>You can use PlaceholderAPI placeholders in messages.</p>
+
+    <h3>Configuration (YAML)</h3>
+    <pre><code>welcome-message:
+  messageType: CHAT
+  message: "&lt;green&gt;Welcome to the server!"
+  parsePlacehodlers: true  # default false</code></pre>
+
+    <h3>Developer Usage</h3>
+    <pre><code>Message message = new ChatMessage("&lt;green&gt;Welcome!");
+
+message.setParsePlaceholders(true).sendTo(player);</code></pre>
+
+    <hr>
+
     <h2>Commands</h2>
 
     <p>Execute commands when a message is sent. Commands are executed from the console with <code>{PLAYER}</code> placeholder support.</p>
