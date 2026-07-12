@@ -150,7 +150,13 @@ message.sendTo(sender);</code></pre>
     .build();
 
 WebhookMessage message = new WebhookMessage("webhookUrl", "MC Webhook", null, null, List.of(embed));
-message.sendTo(sender);</code></pre>
+message.sendTo(sender);
+
+// For WebhookMessage it's allowed (but not recommended) to send message to null sender
+message.sendTo(null);
+
+// Or, more logically using class WebhookMessage built-in method:
+message.sendWebhookMessage();</code></pre>
 
     <hr>
 
