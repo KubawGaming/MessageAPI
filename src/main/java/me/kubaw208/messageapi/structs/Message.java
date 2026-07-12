@@ -636,7 +636,7 @@ public abstract class Message implements Cloneable {
         return asOrNull(MultiMessage.class);
     }
 
-    public @Nullable WebhookMessage asDiscord() {
+    public @Nullable WebhookMessage asWebhook() {
         return asOrNull(WebhookMessage.class);
     }
 
