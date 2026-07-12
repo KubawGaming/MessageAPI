@@ -69,7 +69,7 @@ title.setSoundPaths(List.of("minecraft:entity.experience_orb.pickup"))
     <dependency>
         <groupId>com.github.KubawGaming</groupId>
         <artifactId>MessageAPI</artifactId>
-        <version>1.0.0</version>
+        <version>{VERSION}</version>
     </dependency>
 </dependencies>
 ```
