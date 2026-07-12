@@ -81,6 +81,6 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.github.KubawGaming:MessageAPI:1.0.0'
+    implementation 'com.github.KubawGaming:MessageAPI:{VERSION}'
 }
 ```

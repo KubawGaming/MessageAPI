@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebhookMessage - MessageAPI</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #e0e0e0;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background-color: #1a1a1a;
+        }
+
+        h1 {
+            color: #3498db;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #3498db;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            color: #5dade2;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        pre {
+            background-color: #2a2a2a;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            overflow-x: auto;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        code {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            color: #aaa;
+        }
+
+        .note {
+            background-color: #2a2a2a;
+            border-left: 4px solid #f39c12;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .note strong {
+            color: #f39c12;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #333;
+            margin: 40px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>WebhookMessage</h1>
+
+    <p>Allows sending messages and embeds directly to a Discord channel via a webhook URL.</p>
+
+    <hr>
+
+    <h2>Configuration (YAML)</h2>
+
+    <p>This is an example of all settings for the <code>WEBHOOK</code> message type.</p>
+
+    <pre><code>webhook-alert:
+  messageType: WEBHOOK
+  webhook: "https://discord.com/api/webhooks/your-webhook-id/token"
+  message: "Hello from the server!"
+  username: "ServerBot"
+  avatarUrl: "https://example.com/avatar.png"
+  embeds:
+    - title: "Server Notification"
+      description: "This is an embed message sent from Minecraft."
+      url: "https://example.com"
+      color: 16711680
+      timestamp: "2026-07-12T14:00:00Z"
+      thumbnailUrl: "https://example.com/thumb.png"
+      imageUrl: "https://example.com/image.png"
+      author:
+        name: "Author Name"
+        iconUrl: "https://example.com/author.png"
+      footer:
+        text: "MessageAPI"
+        iconUrl: "https://example.com/icon.png"
+      fields:
+        - name: "Field 1"
+          value: "Value 1"
+          inline: false
+        - name: "Field 2"
+          value: "Value 2"
+          inline: true
+        - name: "Field 3"
+          value: "Value 3"
+          inline: true
+        - name: "Field 0"
+          value: "You can use fields without inline property, but it will be set to false by default."</code></pre>
+
+    <hr>
+
+    <h2>Developer Usage</h2>
+
+    <p>When creating a <code>WebhookMessage</code>, the webhook URL is mandatory.</p>
+
+    <h3>Basic Usage</h3>
+    <pre><code>WebhookMessage message = new WebhookMessage(
+    "webhookUrl",
+    "message",
+    "username",
+    "avatarUrl",
+    List.of(
+        Embed.builder()
+            .title("title")
+            .color(0xFF0000)
+            .description("description")
+            .fields(List.of(
+                Field.builder().name("name1").value("value1").inline(true).build(),
+                Field.builder().name("name2").value("value2").inline(true).build()
+            ))
+            .build()
+    )
+);
+message.sendTo(sender);</code></pre>
+
+    <h3>Using Embeds</h3>
+    <pre><code>Embed embed = Embed.builder()
+    .title("Title")
+    .description("Description")
+    .color(0xFF0000)
+    .build();
+
+WebhookMessage message = new WebhookMessage("webhookUrl", "MC Webhook", null, null, List.of(embed));
+message.sendTo(sender);</code></pre>
+
+    <hr>
+
+    <h2>Error Logging</h2>
+    <p>By default, <code>WebhookMessage</code> logs errors to the console for every webhook (this option is enabled by default). If you wish to disable this logging, you can do it by setting <code>logWebhookErrors</code> to false:</p>
+
+    <pre><code>WebhookMessage.setLogWebhookErrors(false);</code></pre>
+
+</body>
+</html>

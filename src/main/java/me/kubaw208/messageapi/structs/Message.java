@@ -78,6 +78,7 @@ public abstract class Message implements Cloneable {
         registerMessageType(TitleMessage.class);
         registerMessageType(AnimatedTitleMessage.class);
         registerMessageType(MultiMessage.class);
+        registerMessageType(WebhookMessage.class);
 
         try {
             Message.audience = BukkitAudiences.create(plugin);
@@ -619,12 +620,24 @@ public abstract class Message implements Cloneable {
         return asOrNull(ActionBarMessage.class);
     }
 
+    public @Nullable AnimatedActionBarMessage asAnimatedActionBar() {
+        return asOrNull(AnimatedActionBarMessage.class);
+    }
+
     public @Nullable TitleMessage asTitle() {
         return asOrNull(TitleMessage.class);
     }
 
+    public @Nullable AnimatedTitleMessage asAnimatedTitle() {
+        return asOrNull(AnimatedTitleMessage.class);
+    }
+
     public @Nullable MultiMessage asMultiple() {
         return asOrNull(MultiMessage.class);
+    }
+
+    public @Nullable WebhookMessage asDiscord() {
+        return asOrNull(WebhookMessage.class);
     }
 
     /**
