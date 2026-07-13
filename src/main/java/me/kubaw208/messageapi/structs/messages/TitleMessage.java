@@ -12,6 +12,7 @@ import me.kubaw208.messageapi.utils.Utils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @JsonTypeName("TITLE")
 @Getter
@@ -27,11 +28,11 @@ public class TitleMessage extends SoundableMessage {
 
     @JsonCreator
     public TitleMessage(
-            @JsonProperty("title") String title,
-            @JsonProperty("subtitle") String subtitle,
-            @JsonProperty("fadeIn") Long fadeIn,
-            @JsonProperty("stay") Long stay,
-            @JsonProperty("fadeOut") Long fadeOut
+            @JsonProperty("title") @Nullable String title,
+            @JsonProperty("subtitle") @Nullable String subtitle,
+            @JsonProperty("fadeIn") @Nullable Long fadeIn,
+            @JsonProperty("stay") @Nullable Long stay,
+            @JsonProperty("fadeOut") @Nullable Long fadeOut
     ) {
         this.title = title;
         this.subtitle = subtitle;
@@ -40,19 +41,18 @@ public class TitleMessage extends SoundableMessage {
         this.fadeOut = fadeOut;
     }
 
-    @JsonCreator
     public TitleMessage(
-            @JsonProperty("title") String title,
-            @JsonProperty("subtitle") String subtitle,
-            @JsonProperty("fadeIn") Integer fadeIn,
-            @JsonProperty("stay") Integer stay,
-            @JsonProperty("fadeOut") Integer fadeOut
+            @JsonProperty("title") @Nullable String title,
+            @JsonProperty("subtitle") @Nullable String subtitle,
+            @JsonProperty("fadeIn") @Nullable Integer fadeIn,
+            @JsonProperty("stay") @Nullable Integer stay,
+            @JsonProperty("fadeOut") @Nullable Integer fadeOut
     ) {
         this.title = title;
         this.subtitle = subtitle;
-        this.fadeIn = fadeIn.longValue();
-        this.stay = stay.longValue();
-        this.fadeOut = fadeOut.longValue();
+        this.fadeIn = fadeIn == null ? null : fadeIn.longValue();
+        this.stay = stay == null ? null : stay.longValue();
+        this.fadeOut = fadeOut == null ? null : fadeOut.longValue();
     }
 
     @Override
