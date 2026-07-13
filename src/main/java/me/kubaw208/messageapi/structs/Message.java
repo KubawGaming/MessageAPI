@@ -667,7 +667,7 @@ public abstract class Message implements Cloneable {
      * @param stay the display time in milliseconds.
      * @param fadeOut the fade-out time in milliseconds.
      */
-    protected void sendTitle(@NotNull CommandSender recipient, Component title, Component subtitle, int fadeIn, int stay, int fadeOut) {
+    protected void sendTitle(@NotNull CommandSender recipient, Component title, Component subtitle, long fadeIn, long stay, long fadeOut) {
         var audience = Message.audience.sender(recipient);
 
         audience.sendTitlePart(

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 @JsonTypeName("ANIMATED_TITLE")
 @JsonPropertyOrder({
@@ -55,7 +56,7 @@ public class AnimatedTitleMessage extends SoundableMessage {
         Player playerForPlaceholder = recipient instanceof Player player ? player : null;
         List<TitleAnimationData> frameList = new ArrayList<>(frames);
         AtomicInteger currentFrame = new AtomicInteger(0);
-        AtomicInteger allFramesTime = new AtomicInteger(0);
+        AtomicLong allFramesTime = new AtomicLong(0);
 
         if(animatedTitleTasks.containsKey(recipient)) // prevent multiple animations for one player
             animatedTitleTasks.get(recipient).stop();
@@ -76,8 +77,8 @@ public class AnimatedTitleMessage extends SoundableMessage {
             }
 
             TitleAnimationData frame = frameList.get(frameId);
-            int frameTime = frame.getTime() != null ? frame.getTime() : (defaultTime != null ? defaultTime : 1);
-            int time = (allFramesTime.get() + frameTime);
+            long frameTime = frame.getTime() != null ? frame.getTime() : (defaultTime != null ? defaultTime : 1);
+            long time = (allFramesTime.get() + frameTime);
 
             if(task.getExecutions() < time) return;
 

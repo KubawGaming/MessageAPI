@@ -17,10 +17,10 @@ public class TitleAnimationData {
 
     private String title;
     private String subtitle;
-    private Integer fadeIn;
-    private Integer stay;
-    private Integer fadeOut;
-    private Integer time;
+    private Long fadeIn;
+    private Long stay;
+    private Long fadeOut;
+    private Long time;
 
     public TitleAnimationData clone() {
         return new TitleAnimationData(title, subtitle, fadeIn, stay, fadeOut, time);
