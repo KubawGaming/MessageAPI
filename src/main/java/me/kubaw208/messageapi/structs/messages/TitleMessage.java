@@ -40,6 +40,21 @@ public class TitleMessage extends SoundableMessage {
         this.fadeOut = fadeOut;
     }
 
+    @JsonCreator
+    public TitleMessage(
+            @JsonProperty("title") String title,
+            @JsonProperty("subtitle") String subtitle,
+            @JsonProperty("fadeIn") Integer fadeIn,
+            @JsonProperty("stay") Integer stay,
+            @JsonProperty("fadeOut") Integer fadeOut
+    ) {
+        this.title = title;
+        this.subtitle = subtitle;
+        this.fadeIn = fadeIn.longValue();
+        this.stay = stay.longValue();
+        this.fadeOut = fadeOut.longValue();
+    }
+
     @Override
     public TitleMessage sendToInternal(@NotNull CommandSender recipient) {
         Player playerForPlaceholder = recipient instanceof Player player ? player : null;
