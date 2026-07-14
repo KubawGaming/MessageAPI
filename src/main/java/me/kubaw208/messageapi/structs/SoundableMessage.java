@@ -84,9 +84,9 @@ public abstract class SoundableMessage extends LocalizedMessage {
 
         if(soundPaths == null || soundPaths.isEmpty()) return this;
 
-        if(soundSettings.getDelay() == null) soundSettings.setDelay(0);
-        if(soundSettings.getVolume() == null) soundSettings.setVolume(1f);
-        if(soundSettings.getPitch() == null) soundSettings.setPitch(1f);
+        if(soundSettings.getDelay() == null) soundSettings.setDelay(0L);
+        if(soundSettings.getVolume() == null) soundSettings.setVolume(1D);
+        if(soundSettings.getPitch() == null) soundSettings.setPitch(1D);
         return this;
     }
 
@@ -97,7 +97,7 @@ public abstract class SoundableMessage extends LocalizedMessage {
      */
     public Integer getSoundDelay() {
         return soundSettings == null ? 0 :
-                soundSettings.getDelay() != null ? soundSettings.getDelay() : 0;
+                soundSettings.getDelay() != null ? soundSettings.getDelay().intValue() : 0;
     }
 
     /**
@@ -109,7 +109,7 @@ public abstract class SoundableMessage extends LocalizedMessage {
         if(soundSettings == null)
             soundSettings = new SoundSettings();
 
-        soundSettings.setDelay(delay);
+        soundSettings.setDelay((long) delay);
         return this;
     }
 
@@ -119,7 +119,7 @@ public abstract class SoundableMessage extends LocalizedMessage {
      */
     public Float getSoundVolume() {
         return soundSettings == null ? 1.0f :
-                soundSettings.getVolume() != null ? soundSettings.getVolume() : 1.0f;
+                soundSettings.getVolume() != null ? soundSettings.getVolume().floatValue() : 1.0f;
     }
 
     /**
@@ -131,7 +131,7 @@ public abstract class SoundableMessage extends LocalizedMessage {
         if(soundSettings == null)
             soundSettings = new SoundSettings();
 
-        soundSettings.setVolume(volume);
+        soundSettings.setVolume((double) volume);
         return this;
     }
 
@@ -141,7 +141,7 @@ public abstract class SoundableMessage extends LocalizedMessage {
      */
     public Float getSoundPitch() {
         return soundSettings == null ? 1.0f :
-                soundSettings.getPitch() != null ? soundSettings.getPitch() : 1.0f;
+                soundSettings.getPitch() != null ? soundSettings.getPitch().floatValue() : 1.0f;
     }
 
     /**
@@ -153,7 +153,7 @@ public abstract class SoundableMessage extends LocalizedMessage {
         if(soundSettings == null)
             soundSettings = new SoundSettings();
 
-        soundSettings.setPitch(pitch);
+        soundSettings.setPitch((double) pitch);
         return this;
     }
 

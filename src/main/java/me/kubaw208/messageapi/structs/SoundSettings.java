@@ -8,16 +8,15 @@ import lombok.experimental.Accessors;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
-@Setter
+@Getter @Setter
 @Accessors(chain = true)
 @JsonInclude(value= JsonInclude.Include.NON_EMPTY, content= JsonInclude.Include.NON_NULL)
 public class SoundSettings implements Cloneable {
 
     private List<String> paths = new ArrayList<>();
-    private Integer delay;
-    private Float volume;
-    private Float pitch;
+    private Long delay;
+    private Double volume;
+    private Double pitch;
 
     @Override
     public SoundSettings clone() {
